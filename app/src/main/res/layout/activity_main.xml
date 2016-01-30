@@ -1,0 +1,113 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="fill_parent"
+        android:layout_height="68dp"
+        android:background="#e53935"
+        android:elevation="8dp"
+        android:gravity="bottom|center_horizontal"
+        android:paddingBottom="12dp"
+        android:text="签到钱就到"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#fff" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_above="@+id/textView3"
+        android:layout_centerHorizontal="true"
+        android:scaleType="centerInside"
+        android:src="@mipmap/github" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:text="内部测试版"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="3dp"
+        android:text="仅供测试使用，自行承担风险"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="3dp"
+        android:text="低调使用，注意安全"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/github"
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        android:gravity="center_horizontal"
+        android:text="获取验证码，反馈你所遇到的问题"
+
+        android:layout_marginBottom="13dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#2196f3"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/button_accessible"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="#fdfdfd"
+        android:onClick="onButtonClicked"
+        android:text="@string/service_name"
+        android:textColor="#ff666666"
+        android:layout_above="@+id/textView5"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:layout_above="@+id/button_accessible"
+        android:layout_alignEnd="@+id/textView2"
+        android:layout_toEndOf="@+id/textView4" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="验证码："
+        android:id="@+id/textView4"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_above="@+id/button_accessible"
+        android:layout_alignTop="@+id/editText"
+        android:layout_alignStart="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        android:gravity="center_horizontal"
+        android:text="搜索并关注微信公众号:签到钱就到"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#2196f3"
+        android:layout_above="@+id/github"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="15dp" />
+</RelativeLayout>
