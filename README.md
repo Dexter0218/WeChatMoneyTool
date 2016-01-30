@@ -1,21 +1,24 @@
-# 微信抢红包插件 [English Version](https://github.com/geeeeeeeeek/WeChatLuckyMoney/blob/dev/README_EN.md)
+# 微信抢红包插件 
 
 这个Android插件可以帮助你在微信群聊抢红包时战无不胜。当检测到红包时，插件会自动点击屏幕，人工点击的速度无法比拟。
 
-你正在查看的是[**dev分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/dev)，这个分支包含大量实验性的修改，不再更新。如果你希望有一个可以立即使用的插件请切换到[**stable分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/stable)。
+目前，开启了该功能后，可以在任意界面抢微信红包，部分机器可以实现锁屏后抢。
 
-> **注：** stable分支的插件只点击最新的红包，根据目前测试抢红包成功率100%。dev分支在stable分支的基础上尝试了大量修改和优化，能使用但无法保证稳定性。
+欢迎微信关注个人公众号“签到钱就到”，搜素“qiandaolou”。
 
-下面的文档仅针对**dev分支**。
+你正在查看的是从https://github.com/geeeeeeeeek/WeChatLuckyMoney[**dev分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/dev)拷贝后，修改完善的版本，由于原分支包含大量实验性的修改，且不再更新，所以挪来自己学习玩玩。
+
+如果你希望看原作者的稳定版请切换到[**stable分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/stable)。
+
+> **注：** 这里的红包插件，能使用但无法保证稳定性。
 
 
 
 ## 预期特性
 
-1. 可以抢屏幕上显示的所有红包，同类插件往往只能获取最新的一个红包。
-2. 智能跳过已经戳过的红包，避免频繁点击影响正常使用。
-3. 红包日志 (默认未开启)，方便查看抢过的红包内容。
-4. 性能优化，感受不到插件的存在，可一直后台开启，不影响日常聊天。
+1. 可以抢收到的的所有微信红包。
+2. 自动删除已经戳过的红包，避免频繁点击影响正常使用。
+3. 性能优化，感受不到插件的存在，可一直后台开启，不影响日常聊天。
 5. 由于这是一份教学代码，项目的文档和注释都比较完整，代码适合阅读。
 
 ## 实现原理
@@ -58,6 +61,8 @@ public class Stage {
 | FETCHED_STAGE  | 已经结束一个FETCH阶段，屏幕上的红包都已加入待抢队列 |
 | OPENING_STAGE  | 正在拆红包，此时不应有别的操作              |
 | OPENED_STAGE   | 红包成功抢到，进入红包详情页面              |
+| DELETING_STAGE | 无论是否抢到，长按红包，进入红包删除状态     |
+| DELETED_STAGE  | 检测“删除”字样，删除红包                    |
 
 1.程序以FETCHED_STAGE 开始，将屏幕上的红包加入待抢队列：
 
@@ -71,6 +76,8 @@ public class Stage {
 --> [CLICK] --> OPENING_STAGE --> [CLICK] --> OPENED_STAGE --> [BACK] --> FETCHED_STAGE -->（抢到）
 
 --> [CLICK] --> OPENING_STAGE --> [BACK] --> FETCHED_STAGE -->（没抢到）
+
+(抢到、没抢到)--> [BACK]-->DELETING_STAGE-->[LONG_CLICK] --> [CLICK]-->DELETED_STAGE
 ```
 
 3.不断重复流程1和2
@@ -189,7 +196,7 @@ performGlobalAction(GLOBAL_ACTION_BACK);
 
 #### 3.1 判断红包节点是否已被抢过
 
-实现这一点是编写时最大的障碍。对于一般的Java对象实例来说，除非被GC回收，实例的Id都不会变化。我最初的想法是通过正则表达式匹配下面的十六进制对象id来表示一个红包。
+目前，实现这一点是编写时最大的障碍。对于一般的Java对象实例来说，除非被GC回收，实例的Id都不会变化。我最初的想法是通过正则表达式匹配下面的十六进制对象id来表示一个红包。
 
 ``` 
 android.view.accessibility.AccessibilityNodeInfo@2a5a7c; .......
@@ -244,6 +251,10 @@ if (node.getParent() != null) {
 
 可以看出这并不是很有效率的解决方案。在实测中，有时队列中中红包失效后被舍弃，但没有新的AccessibilityEvent发生，接下来的操作都被挂起了。在戳过较多红包之后，这种情况表现得尤为明显，必须要显式地改变窗体内容才能解决。
 
+
+> **注：** 目前，未采用上述方案，而是不管是否抢到，直接删除已经戳开后的红包。
+
+
 #### 4.2 根据红包类型选择操作
 
 红包被戳开前会进行查重。戳开后如果界面上出现了“拆红包”几个字，说明红包还没有被别人抢走，立刻点击“拆红包”并将stage标记为OPENED_STAGE。
@@ -270,8 +281,9 @@ return -1;
 
 ## 版权与免责说明
 
-本项目源自小米今年秋季发布会时演示的抢红包测试[源码](https://github.com/XiaoMi/LuckyMoneyTool)。stable分支基于此代码继续开发，dev分支重写了几乎所有的逻辑代码。应用的包名com.miui.hongbao未变。
+本项目源自小米今年秋季发布会时演示的抢红包测试[源码](https://github.com/XiaoMi/LuckyMoneyTool)。原作者[**stable分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/stable)分支基于此代码继续开发，dev分支重写了几乎所有的逻辑代码。
 
+这里基于其[**dev分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/dev)码继续开发，增加了自动删除，黑屏解锁抢等功能。
 由于插件可能会改变自然的微信交互方式，这份代码仅可用于教学目的，不得更改后用于其他用途。对于使用插件时可能发生的任何情形，由使用者自行承担，包括但不限于“禁用红包功能”、“微信封号”。
 
 项目使用MIT许可证。在理解可能的风险后，你可以将代码用于任何用途。
