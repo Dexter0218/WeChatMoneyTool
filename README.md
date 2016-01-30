@@ -6,7 +6,7 @@
 
 欢迎微信关注个人公众号“签到钱就到”，搜素“qiandaolou”。
 
-你正在查看的是从https://github.com/geeeeeeeeek/WeChatLuckyMoney[**dev分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/dev)拷贝后，修改完善的版本，由于原分支包含大量实验性的修改，且不再更新，所以挪来自己学习玩玩。
+你正在查看的是从[**dev分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/dev)拷贝后，修改完善的版本，由于原分支包含大量实验性的修改，且不再更新，所以挪来自己学习玩玩。
 
 如果你希望看原作者的稳定版请切换到[**stable分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/stable)。
 
