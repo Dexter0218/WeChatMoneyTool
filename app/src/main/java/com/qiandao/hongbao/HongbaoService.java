@@ -165,7 +165,12 @@ public class HongbaoService extends AccessibilityService {
                 Log.d(Tag, "FETCHED_STAGE");
 //                deleteHongbao(nodeInfo);
                 if (!isHongbaoAppOK) {
-                    isHongbaoAppOK = isHongbaoOK(nodeInfo);
+                    try{
+                        isHongbaoAppOK = isHongbaoOK(nodeInfo);
+                    }
+                    catch (Exception e){
+                        Log.e(Tag,"isHongbaoOK Exception");
+                    }
                 }
 
                 /* 先消灭待抢红包队列中的红包 */
