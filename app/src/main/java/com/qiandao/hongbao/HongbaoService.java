@@ -149,7 +149,7 @@ public class HongbaoService extends AccessibilityService {
                     return;
                 }
                 ttl = 0;
-                isHongbaoAppOK = false;
+               isHongbaoAppOK = false;
                 Stage.getInstance().entering(Stage.FETCHED_STAGE);
                 Log.e(TAG, "!@!!!!!!!!!!!!!!!!!!!!!!回退");
                 performMyGlobalAction(GLOBAL_ACTION_BACK);
@@ -331,8 +331,7 @@ public class HongbaoService extends AccessibilityService {
         if (!successNoticeNodes.isEmpty()) {
             AccessibilityNodeInfo deleteNode = successNoticeNodes.get(successNoticeNodes.size() - 1);
             Log.e(TAG, "deleteHongbao.size():" + successNoticeNodes.size());
-            Log.e(TAG, "deleteNode:" + deleteNode.isClickable());
-            if (deleteNode.getParent() != null && deleteNode.getText() != null && deleteNode.getText().equals("删除")) {
+            if (deleteNode.getParent() != null && deleteNode.getText() != null && deleteNode.getText().toString().equals("删除")) {
                 if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.LinearLayout")) {
                     Log.e(TAG, "點擊刪除");
                     deleteNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -365,7 +364,7 @@ public class HongbaoService extends AccessibilityService {
             AccessibilityNodeInfo deleteNode = noticeNodes.get(noticeNodes.size() - 1);
             Log.e(TAG, "deleteHongbao.size():" + noticeNodes.size());
             Log.e(TAG, "deleteNode:" + deleteNode.isClickable());
-            if (deleteNode != null && deleteNode.getParent() != null && deleteNode.getText() != null && deleteNode.getText().equals("删除")) {
+            if (deleteNode != null && deleteNode.getParent() != null && deleteNode.getText() != null && deleteNode.getText().toString().equals("删除")) {
                 if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.LinearLayout")) {
                     Toast.makeText(this, "软件开启成功", Toast.LENGTH_SHORT).show();
                     return true;
