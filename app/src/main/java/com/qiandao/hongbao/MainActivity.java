@@ -30,15 +30,15 @@ import java.util.regex.Pattern;
 
 public class MainActivity extends Activity {
 
-    private static String Tag ="HongbaoMainActivity";
-    private final Intent mAccessibleIntent =
-            new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+    private static String TAG = "HongbaoMainActivity";
+
 
     private Button switchPlugin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG,"onCreate");
         setContentView(R.layout.activity_main);
 
         CrashReport.initCrashReport(getApplicationContext(), "900019366", false);
@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
 
     }
 
-    private void handleMaterialStatusBar(){
+    private void handleMaterialStatusBar() {
         // Not supported in APK level lower than 21
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
         Window window = this.getWindow();
@@ -61,6 +61,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i(TAG, "onResume");
         updateServiceStatus();
     }
 
@@ -68,6 +69,7 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onDestroy();
+        Log.i(TAG, "onDestroy");
     }
 
     private void updateServiceStatus() {
@@ -95,7 +97,8 @@ public class MainActivity extends Activity {
     }
 
     public void onButtonClicked(View view) {
-            startActivity(mAccessibleIntent);
+        Intent mAccessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        startActivity(mAccessibleIntent);
     }
 
 

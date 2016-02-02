@@ -156,13 +156,11 @@ public class HongbaoService extends AccessibilityService {
                 break;
             case Stage.FETCHED_STAGE:
                 Log.d(TAG, "FETCHED_STAGE");
-//                deleteHongbao(nodeInfo);
                 if (!isHongbaoAppOK) {
-                    try{
+                    try {
                         isHongbaoAppOK = isHongbaoOK(nodeInfo);
-                    }
-                    catch (Exception e){
-                        Log.e(TAG,"isHongbaoOK Exception");
+                    } catch (Exception e) {
+                        Log.e(TAG, "isHongbaoOK Exception");
                     }
                 }
 
@@ -178,7 +176,7 @@ public class HongbaoService extends AccessibilityService {
                         fetchedIdentifiers.add(id);
 
                         // 调试信息，在每次打开红包后打印出已经获取的红包
-                        Log.d("fetched", Arrays.toString(fetchedIdentifiers.toArray()));
+//                        Log.d("fetched", Arrays.toString(fetchedIdentifiers.toArray()));
 
                         Stage.getInstance().entering(Stage.OPENING_STAGE);
                         node.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -201,8 +199,7 @@ public class HongbaoService extends AccessibilityService {
                 }
                 break;
             case Stage.DELETED_STAGE:
-                boolean tem = deleteHongbao(nodeInfo);
-                if (!tem) {
+                if (!deleteHongbao(nodeInfo)) {
                     Stage.getInstance().entering(Stage.DELETED_STAGE);
                     return;
                 }
@@ -301,12 +298,12 @@ public class HongbaoService extends AccessibilityService {
      * 递归查找拆红包按钮
      */
     private AccessibilityNodeInfo findOpenButton(AccessibilityNodeInfo node) {
-        if (node==null)
+        if (node == null)
             return null;
 
         //非layout元素
         if (node.getChildCount() == 0) {
-            if("android.widget.Button".equals(node.getClassName()))
+            if ("android.widget.Button".equals(node.getClassName()))
                 return node;
             else
                 return null;
@@ -315,7 +312,7 @@ public class HongbaoService extends AccessibilityService {
         //layout元素，遍历找button
         for (int i = 0; i < node.getChildCount(); i++) {
             AccessibilityNodeInfo button = findOpenButton(node.getChild(i));
-            if(button != null)
+            if (button != null)
                 return button;
         }
         return null;
@@ -363,10 +360,10 @@ public class HongbaoService extends AccessibilityService {
     private boolean isHongbaoOK(AccessibilityNodeInfo nodeInfo) {
         if (nodeInfo == null) return false;
         /* 删除 */
-        List<AccessibilityNodeInfo> successNoticeNodes = nodeInfo.findAccessibilityNodeInfosByText("删除");
-        if (!successNoticeNodes.isEmpty()) {
-            AccessibilityNodeInfo deleteNode = successNoticeNodes.get(successNoticeNodes.size() - 1);
-            Log.e(TAG, "deleteHongbao.size():" + successNoticeNodes.size());
+        List<AccessibilityNodeInfo> noticeNodes = nodeInfo.findAccessibilityNodeInfosByText("删除");
+        if (!noticeNodes.isEmpty()) {
+            AccessibilityNodeInfo deleteNode = noticeNodes.get(noticeNodes.size() - 1);
+            Log.e(TAG, "deleteHongbao.size():" + noticeNodes.size());
             Log.e(TAG, "deleteNode:" + deleteNode.isClickable());
             if (deleteNode != null && deleteNode.getParent() != null && deleteNode.getText() != null && deleteNode.getText().equals("删除")) {
                 if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.LinearLayout")) {
@@ -428,28 +425,16 @@ public class HongbaoService extends AccessibilityService {
      */
     private void checkBackFromHongbaoPage(AccessibilityNodeInfo nodeInfo) {
         if (nodeInfo != null) {
-            List<AccessibilityNodeInfo> successNodes = nodeInfo.findAccessibilityNodeInfosByText("红包详情");
+            List<AccessibilityNodeInfo> hongbaoDetailNodes = nodeInfo.findAccessibilityNodeInfosByText("红包详情");
 //            List<AccessibilityNodeInfo> successNodes2 = nodeInfo.findAccessibilityNodeInfosByText("微信安全支付");
-            if (!successNodes.isEmpty()) {
-//                Log.e(TAG, "successNodes.get(0).getClassName():" + successNodes.get(0).getClassName());
-//                Log.e(TAG, "successNodes.size:" + successNodes.size());
-
-                for (int i = 0; i < successNodes.size(); i++) {
-                    if (successNodes.get(i).getParent() != null && successNodes.get(i).getParent().getChildCount() == 3 && successNodes.get(i).getParent().getChild(2).getText().equals("微信安全支付")) {
-//                        Log.e(TAG, "successNodes.get(i).getParent().getChildCount():" + successNodes.get(i).getParent().getChildCount());
-//                        Log.e(TAG, "successNodes.get(i).getParent().getChild1:" + successNodes.get(i).getParent().getChild(0).getText());
-//                        Log.e(TAG, "successNodes.get(i).getParent().getChild2:" + successNodes.get(i).getParent().getChild(1).getText());
-//                        Log.e(TAG, "successNodes.get(i).getParent().getChild3:" + successNodes.get(i).getParent().getChild(2).getText());
+            if (!hongbaoDetailNodes.isEmpty()) {
+                for (int i = 0; i < hongbaoDetailNodes.size(); i++) {
+                    if (hongbaoDetailNodes.get(i).getParent() != null && hongbaoDetailNodes.get(i).getParent().getChildCount() == 3 && hongbaoDetailNodes.get(i).getParent().getChild(2).getText().equals("微信安全支付")) {
                         Stage.getInstance().entering(Stage.DELETING_STAGE);
                         Log.e(TAG, "卡在详情界面，回退");
-//                        Toast.makeText(this, "插件有异常，请见谅",Toast.LENGTH_SHORT).show();
                         performMyGlobalAction(GLOBAL_ACTION_BACK);
                     }
-//                    successNodes.get(i).getParent();
                 }
-//                if (successNodes.get(0).getParent().equals(successNodes2.get(0).getParent())) {
-//
-//                }
             }
         }
 
