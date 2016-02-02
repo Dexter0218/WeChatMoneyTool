@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.tencent.bugly.crashreport.CrashReport;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -39,6 +41,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        CrashReport.initCrashReport(getApplicationContext(), "900019366", false);
         switchPlugin = (Button) findViewById(R.id.button_accessible);
         codeEditor = (EditText) findViewById(R.id.editText);
         textView = (TextView) findViewById(R.id.textView4);

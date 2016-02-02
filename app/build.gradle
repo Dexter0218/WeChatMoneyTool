@@ -3,13 +3,17 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 22
     buildToolsVersion '23.0.1'
-
     defaultConfig {
         applicationId "com.qiandao.hongbao"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+    }
+    android {
+        sourceSets {
+            main.jniLibs.srcDirs = ['libs']
+        }
     }
     buildTypes {
         release {
@@ -17,6 +21,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             debuggable false
         }
+    }
+    productFlavors {
     }
 }
 
