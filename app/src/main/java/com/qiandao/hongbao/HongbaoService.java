@@ -6,16 +6,14 @@ import android.app.KeyguardManager;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Parcelable;
 import android.os.PowerManager;
-import android.os.SystemClock;
 import android.util.Log;
-import android.view.Display;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -304,7 +302,9 @@ public class HongbaoService extends AccessibilityService {
         /* 戳开红包，红包还没抢完，遍历节点匹配“拆红包” */
 //        List<AccessibilityNodeInfo> successNoticeNodes = nodeInfo.findAccessibilityNodeInfosByText("拆红包");
 //        List<AccessibilityNodeInfo> preventNoticeNodes = nodeInfo.findAccessibilityNodeInfosByText("领取红包");
-        AccessibilityNodeInfo successNoticeNodes = (nodeInfo.getChildCount() > 3) ? nodeInfo.getChild(3) : null;
+//        AccessibilityNodeInfo successNoticeNodes = (nodeInfo.getChildCount() > 3) ? nodeInfo.getChild(3) : null;
+        AccessibilityNodeInfo successNoticeNodes = findOpenButton(nodeInfo);
+
         if (successNoticeNodes != null) {
             Log.e(Tag, "successNoticeNodes:" + successNoticeNodes.getClassName());
         }
@@ -334,6 +334,30 @@ public class HongbaoService extends AccessibilityService {
             ttl += 1;
             return -1;
         }
+    }
+
+    /**
+     * 递归查找拆红包按钮
+     */
+    private AccessibilityNodeInfo findOpenButton(AccessibilityNodeInfo node) {
+        if (node==null)
+            return null;
+
+        //非layout元素
+        if (node.getChildCount() == 0) {
+            if("android.widget.Button".equals(node.getClassName()))
+                return node;
+            else
+                return null;
+        }
+
+        //layout元素，遍历找button
+        for (int i = 0; i < node.getChildCount(); i++) {
+            AccessibilityNodeInfo button = findOpenButton(node.getChild(i));
+            if(button != null)
+                return button;
+        }
+        return null;
     }
 
     /**
