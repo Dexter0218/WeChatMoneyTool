@@ -50,7 +50,8 @@
         android:layout_below="@+id/textView2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="3dp"
-        android:text="低调使用，注意安全"
+        android:text="请禁止掉微信获取手机信息的权限"
+        android:textColor="@android:color/holo_red_light"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -58,7 +59,7 @@
         android:layout_width="fill_parent"
         android:layout_height="20dp"
         android:gravity="center_horizontal"
-        android:text="获取验证码，反馈你所遇到的问题"
+        android:text="反馈你所遇到的问题"
 
         android:layout_marginBottom="13dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -81,23 +82,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="30dp" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:layout_above="@+id/button_accessible"
-        android:layout_alignEnd="@+id/textView2"
-        android:layout_toEndOf="@+id/textView4" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="验证码："
-        android:id="@+id/textView4"
-        android:gravity="center_vertical|center_horizontal"
-        android:layout_above="@+id/button_accessible"
-        android:layout_alignTop="@+id/editText"
-        android:layout_alignStart="@+id/textView2" />
 
     <TextView
         android:id="@+id/textView5"

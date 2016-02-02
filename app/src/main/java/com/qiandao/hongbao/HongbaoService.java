@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Parcelable;
 import android.os.PowerManager;
@@ -27,7 +26,7 @@ import java.util.regex.Pattern;
  * 抢红包主要的逻辑部分
  */
 public class HongbaoService extends AccessibilityService {
-    private static String Tag = "HongbaoService";
+    private static String TAG = "HongbaoService";
     /**
      * 已获取的红包队列
      */
@@ -47,7 +46,6 @@ public class HongbaoService extends AccessibilityService {
      * 尝试次数
      */
     private int ttl = 0;
-    private final static String TAG = "HONGBAO";
     private final static String NOTIFICATION_TIP = "[微信红包]";
     AccessibilityNodeInfo mCurrentNode;
     //电源管理
@@ -73,12 +71,9 @@ public class HongbaoService extends AccessibilityService {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-//        if (!Util.isUseable()) {
-//            return;
-//        }
         if (event.getEventType() == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
             String tip = event.getText().toString();
-            Log.e(Tag, "onAccessibilityEvent: tip" + tip);
+            Log.e(TAG, "onAccessibilityEvent: tip" + tip);
             if (!tip.contains(NOTIFICATION_TIP)) {
                 return;
             }
@@ -96,15 +91,15 @@ public class HongbaoService extends AccessibilityService {
                 Notification notification = (Notification) parcelable;
                 try {
                     if (Stage.getInstance().getCurrentStage() == Stage.FETCHED_STAGE) {
-                        Log.e(Tag, "Stage.FETCHED_STAGE_>send()");
+                        Log.e(TAG, "Stage.FETCHED_STAGE_>send()");
                         notification.contentIntent.send();
                     } else if (Stage.getInstance().getCurrentStage() != Stage.OPENING_STAGE) {
-                        Log.e(Tag, "呵呵" + Stage.getInstance().getCurrentStage());
+                        Log.e(TAG, "呵呵" + Stage.getInstance().getCurrentStage());
                         notification.contentIntent.send();
                     }
 
                 } catch (Exception e) {
-                    Log.e(Tag, "PendingIntent.CanceledException", e);
+                    Log.e(TAG, "PendingIntent.CanceledException", e);
                 }
             }
             return;
@@ -127,7 +122,7 @@ public class HongbaoService extends AccessibilityService {
 
         switch (Stage.getInstance().getCurrentStage()) {
             case Stage.OPENING_STAGE:
-                Log.d(Tag, "OPENING_STAGE");
+                Log.d(TAG, "OPENING_STAGE");
                 // 调试信息，打印TTL
                 Log.d("TTL", String.valueOf(ttl));
                 int result = openHongbao(nodeInfo);
@@ -135,11 +130,11 @@ public class HongbaoService extends AccessibilityService {
                 if (result == -1 && ttl < MAX_TTL) {
                     return;
                 } else if (result == 0) {
-                    Log.e(Tag, "opened，to deleting");
+                    Log.e(TAG, "opened，to deleting");
                     Stage.getInstance().entering(Stage.DELETING_STAGE);
                     performMyGlobalAction(GLOBAL_ACTION_BACK);
                 } else {
-                    Log.e(Tag, "reOpen");
+                    Log.e(TAG, "reOpen");
                     checkList(nodeInfo);
                     Stage.getInstance().entering(Stage.FETCHED_STAGE);
                 }
@@ -147,7 +142,7 @@ public class HongbaoService extends AccessibilityService {
                 if (nodesToFetch.size() == 0) handleWindowChange(nodeInfo);
                 break;
             case Stage.OPENED_STAGE:
-                Log.d(Tag, "OPENED_STAGE");
+                Log.d(TAG, "OPENED_STAGE");
                 List<AccessibilityNodeInfo> successNodes = nodeInfo.findAccessibilityNodeInfosByText("红包详情");
                 if (successNodes.isEmpty() && ttl < MAX_TTL) {
                     ttl += 1;
@@ -156,18 +151,18 @@ public class HongbaoService extends AccessibilityService {
                 ttl = 0;
                 isHongbaoAppOK = false;
                 Stage.getInstance().entering(Stage.FETCHED_STAGE);
-                Log.e(Tag, "!@!!!!!!!!!!!!!!!!!!!!!!回退");
+                Log.e(TAG, "!@!!!!!!!!!!!!!!!!!!!!!!回退");
                 performMyGlobalAction(GLOBAL_ACTION_BACK);
                 break;
             case Stage.FETCHED_STAGE:
-                Log.d(Tag, "FETCHED_STAGE");
+                Log.d(TAG, "FETCHED_STAGE");
 //                deleteHongbao(nodeInfo);
                 if (!isHongbaoAppOK) {
                     try{
                         isHongbaoAppOK = isHongbaoOK(nodeInfo);
                     }
                     catch (Exception e){
-                        Log.e(Tag,"isHongbaoOK Exception");
+                        Log.e(TAG,"isHongbaoOK Exception");
                     }
                 }
 
@@ -197,11 +192,11 @@ public class HongbaoService extends AccessibilityService {
 
                 break;
             case Stage.DELETING_STAGE:
-                Log.d(Tag, "DELETING_STAGE");
+                Log.d(TAG, "DELETING_STAGE");
                 checkBackFromHongbaoPage(nodeInfo);
                 if (mCurrentNode != null && mCurrentNode.getParent() != null) {
                     mCurrentNode.getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
-                    Log.e(Tag, "正在删除");
+                    Log.e(TAG, "正在删除");
                     Stage.getInstance().entering(Stage.DELETED_STAGE);
                 }
                 break;
@@ -240,35 +235,9 @@ public class HongbaoService extends AccessibilityService {
         }
         /*没找到就返回*/
         for (AccessibilityNodeInfo cellNode : fetchNodes) {
-//            String id = getHongbaoHash(cellNode);
-//            if(fetchedIdentifiers.contains(id)){
-//                Log.e(Tag, "id:" + id + ",这个红包，已经打开过");
-//                cellNode.getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
-//                deleteHongbao(nodeInfo);
-//
-//            }
-//            /* 如果节点没有被回收且该红包没有抢过 */
-//            if (id != null && !fetchedIdentifiers.contains(id)) {
             nodesToFetch.add(cellNode);
-//                Log.e(Tag, "添加别人发的待抢红包");
         }
     }
-//        if(!myOwnNodes.isEmpty()){
-//            for (AccessibilityNodeInfo cellNode : myOwnNodes) {
-//                String id = getHongbaoHash(cellNode);
-//
-//            /* 如果节点没有被回收且该红包没有抢过 */
-//                if (id != null && !fetchedIdentifiers.contains(id)) {
-//                    nodesToFetch.add(cellNode);
-//                    Log.e(Tag, "cellNode:"+cellNode.);
-//                    Log.e(Tag, "添加自己发的待抢红包");
-//                }
-//            }
-//        }
-
-    // 调试信息，在每次fetch后打印出待抢红包
-//         Log.d("toFetch", Arrays.toString(nodesToFetch.toArray()));
-//    }
 
 
     /**
@@ -299,24 +268,16 @@ public class HongbaoService extends AccessibilityService {
             return 0;
         }
 
-        /* 戳开红包，红包还没抢完，遍历节点匹配“拆红包” */
-//        List<AccessibilityNodeInfo> successNoticeNodes = nodeInfo.findAccessibilityNodeInfosByText("拆红包");
-//        List<AccessibilityNodeInfo> preventNoticeNodes = nodeInfo.findAccessibilityNodeInfosByText("领取红包");
-//        AccessibilityNodeInfo successNoticeNodes = (nodeInfo.getChildCount() > 3) ? nodeInfo.getChild(3) : null;
         AccessibilityNodeInfo successNoticeNodes = findOpenButton(nodeInfo);
 
         if (successNoticeNodes != null) {
-            Log.e(Tag, "successNoticeNodes:" + successNoticeNodes.getClassName());
+            Log.e(TAG, "successNoticeNodes:" + successNoticeNodes.getClassName());
         }
         if (successNoticeNodes != null && successNoticeNodes.getClassName().equals("android.widget.Button")) {
-//        if (!successNoticeNodes.isEmpty()) {
-//            AccessibilityNodeInfo openNode = successNoticeNodes.get(successNoticeNodes.size() - 1);
-//            Log.e(Tag, "successNoticeNodes.size():" + successNoticeNodes.size());
-//            Log.e(Tag, "openNode:" + openNode.isClickable());
             AccessibilityNodeInfo openNode = successNoticeNodes;
             Stage.getInstance().entering(Stage.OPENED_STAGE);
             openNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-            Log.e(Tag, "拆红包");
+            Log.e(TAG, "拆红包");
             try {
                 Thread.sleep(500);
             } catch (Exception e) {
@@ -329,7 +290,7 @@ public class HongbaoService extends AccessibilityService {
             } catch (Exception e) {
 
             }
-            Log.e(Tag, "正在打开");
+            Log.e(TAG, "正在打开");
             Stage.getInstance().entering(Stage.OPENING_STAGE);
             ttl += 1;
             return -1;
@@ -372,11 +333,11 @@ public class HongbaoService extends AccessibilityService {
         List<AccessibilityNodeInfo> successNoticeNodes = nodeInfo.findAccessibilityNodeInfosByText("删除");
         if (!successNoticeNodes.isEmpty()) {
             AccessibilityNodeInfo deleteNode = successNoticeNodes.get(successNoticeNodes.size() - 1);
-            Log.e(Tag, "deleteHongbao.size():" + successNoticeNodes.size());
-            Log.e(Tag, "deleteNode:" + deleteNode.isClickable());
+            Log.e(TAG, "deleteHongbao.size():" + successNoticeNodes.size());
+            Log.e(TAG, "deleteNode:" + deleteNode.isClickable());
             if (deleteNode.getParent() != null && deleteNode.getText() != null && deleteNode.getText().equals("删除")) {
                 if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.LinearLayout")) {
-                    Log.e(Tag, "點擊刪除");
+                    Log.e(TAG, "點擊刪除");
                     deleteNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     flag = false;
                     isHongbaoAppOK = false;
@@ -405,8 +366,8 @@ public class HongbaoService extends AccessibilityService {
         List<AccessibilityNodeInfo> successNoticeNodes = nodeInfo.findAccessibilityNodeInfosByText("删除");
         if (!successNoticeNodes.isEmpty()) {
             AccessibilityNodeInfo deleteNode = successNoticeNodes.get(successNoticeNodes.size() - 1);
-            Log.e(Tag, "deleteHongbao.size():" + successNoticeNodes.size());
-            Log.e(Tag, "deleteNode:" + deleteNode.isClickable());
+            Log.e(TAG, "deleteHongbao.size():" + successNoticeNodes.size());
+            Log.e(TAG, "deleteNode:" + deleteNode.isClickable());
             if (deleteNode != null && deleteNode.getParent() != null && deleteNode.getText() != null && deleteNode.getText().equals("删除")) {
                 if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.LinearLayout")) {
                     Toast.makeText(this, "软件开启成功", Toast.LENGTH_SHORT).show();
@@ -470,17 +431,17 @@ public class HongbaoService extends AccessibilityService {
             List<AccessibilityNodeInfo> successNodes = nodeInfo.findAccessibilityNodeInfosByText("红包详情");
 //            List<AccessibilityNodeInfo> successNodes2 = nodeInfo.findAccessibilityNodeInfosByText("微信安全支付");
             if (!successNodes.isEmpty()) {
-//                Log.e(Tag, "successNodes.get(0).getClassName():" + successNodes.get(0).getClassName());
-//                Log.e(Tag, "successNodes.size:" + successNodes.size());
+//                Log.e(TAG, "successNodes.get(0).getClassName():" + successNodes.get(0).getClassName());
+//                Log.e(TAG, "successNodes.size:" + successNodes.size());
 
                 for (int i = 0; i < successNodes.size(); i++) {
                     if (successNodes.get(i).getParent() != null && successNodes.get(i).getParent().getChildCount() == 3 && successNodes.get(i).getParent().getChild(2).getText().equals("微信安全支付")) {
-//                        Log.e(Tag, "successNodes.get(i).getParent().getChildCount():" + successNodes.get(i).getParent().getChildCount());
-//                        Log.e(Tag, "successNodes.get(i).getParent().getChild1:" + successNodes.get(i).getParent().getChild(0).getText());
-//                        Log.e(Tag, "successNodes.get(i).getParent().getChild2:" + successNodes.get(i).getParent().getChild(1).getText());
-//                        Log.e(Tag, "successNodes.get(i).getParent().getChild3:" + successNodes.get(i).getParent().getChild(2).getText());
+//                        Log.e(TAG, "successNodes.get(i).getParent().getChildCount():" + successNodes.get(i).getParent().getChildCount());
+//                        Log.e(TAG, "successNodes.get(i).getParent().getChild1:" + successNodes.get(i).getParent().getChild(0).getText());
+//                        Log.e(TAG, "successNodes.get(i).getParent().getChild2:" + successNodes.get(i).getParent().getChild(1).getText());
+//                        Log.e(TAG, "successNodes.get(i).getParent().getChild3:" + successNodes.get(i).getParent().getChild(2).getText());
                         Stage.getInstance().entering(Stage.DELETING_STAGE);
-                        Log.e(Tag, "卡在详情界面，回退");
+                        Log.e(TAG, "卡在详情界面，回退");
 //                        Toast.makeText(this, "插件有异常，请见谅",Toast.LENGTH_SHORT).show();
                         performMyGlobalAction(GLOBAL_ACTION_BACK);
                     }
@@ -508,7 +469,7 @@ public class HongbaoService extends AccessibilityService {
         if (pm == null) {
             pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         }
-        Log.e(Tag, "lightScreen()");
+        Log.e(TAG, "lightScreen()");
         lock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, TAG);
         lock.acquire();
     }
@@ -520,7 +481,7 @@ public class HongbaoService extends AccessibilityService {
         if (kManager == null) {
             kManager = ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE));
         }
-        Log.e(Tag, "unLock()");
+        Log.e(TAG, "unLock()");
         kLock = kManager.newKeyguardLock(TAG);
         kLock.disableKeyguard();
     }
@@ -530,7 +491,7 @@ public class HongbaoService extends AccessibilityService {
      */
     private void clean() {
 
-        Log.e(Tag, "clean()");
+        Log.e(TAG, "clean()");
         if (kLock != null) {
             kLock.reenableKeyguard();
             kLock = null;
@@ -596,12 +557,12 @@ public class HongbaoService extends AccessibilityService {
         if (!nodes.isEmpty()) {
             AccessibilityNodeInfo nodeToClick = nodes.get(0);
             CharSequence contentDescription = nodeToClick.getContentDescription();
-//            Log.e(Tag,"contentDescription:"+contentDescription);
-//            Log.e(Tag,"lastContentDescription:"+lastContentDescription);
+//            Log.e(TAG,"contentDescription:"+contentDescription);
+//            Log.e(TAG,"lastContentDescription:"+lastContentDescription);
             if (contentDescription != null && nodeToClick.isClickable()/*&& !lastContentDescription.equals(contentDescription)*/) {
                 nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                Log.e(Tag, "checkList->>ACTION_CLICK");
-//                Log.e(Tag, "fetchHongbao: "+ NOTIFICATION_TIP);
+                Log.e(TAG, "checkList->>ACTION_CLICK");
+//                Log.e(TAG, "fetchHongbao: "+ NOTIFICATION_TIP);
 //                lastContentDescription = contentDescription.toString();
                 return true;
             }
