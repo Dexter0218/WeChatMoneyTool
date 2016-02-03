@@ -74,9 +74,10 @@ public class HongbaoService extends AccessibilityService {
         if (event.getEventType() == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
             String tip = event.getText().toString();
             Log.e(TAG, "onAccessibilityEvent: tip" + tip);
-            if (!tip.contains(NOTIFICATION_TIP)) {
+            if (!tip.contains(NOTIFICATION_TIP) || isPersonalTailor(tip)) {
                 return;
             }
+
 
             if (!isScreenOn(this)) {
                 lightScreen();
@@ -117,6 +118,22 @@ public class HongbaoService extends AccessibilityService {
 
     }
 
+    String match[] = {"专属", "定向"};
+
+    /**
+     * 鉴别是否私人定制的红包
+     * @param str
+     * @return
+     */
+    private boolean isPersonalTailor(String str) {
+        for (int i = 0; i < match.length; i++) {
+            if (str.contains(match[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void handleWindowChange(AccessibilityNodeInfo nodeInfo) {
 
@@ -149,7 +166,7 @@ public class HongbaoService extends AccessibilityService {
                     return;
                 }
                 ttl = 0;
-               isHongbaoAppOK = false;
+                isHongbaoAppOK = false;
                 Stage.getInstance().entering(Stage.FETCHED_STAGE);
                 Log.e(TAG, "!@!!!!!!!!!!!!!!!!!!!!!!回退");
                 performMyGlobalAction(GLOBAL_ACTION_BACK);
@@ -232,6 +249,9 @@ public class HongbaoService extends AccessibilityService {
         }
         /*没找到就返回*/
         for (AccessibilityNodeInfo cellNode : fetchNodes) {
+            Log.i(TAG, "红包上的文字："+cellNode.getParent().getChild(0).getText().toString());
+            if (isPersonalTailor(cellNode.getParent().getChild(0).getText().toString()))
+                continue;
             nodesToFetch.add(cellNode);
         }
     }

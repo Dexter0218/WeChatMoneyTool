@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:layout="@layout/preference_category_layout"
+        android:title="监视选项">
+        <EditTextPreference
+            android:key="pref_watch_exclude_words"
+            android:layout="@layout/preference_checkbox"
+            android:summary="不拆开包含这些文字的红包(空格间隔)"
+            android:title="屏蔽红包文字">
+
+        </EditTextPreference>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
