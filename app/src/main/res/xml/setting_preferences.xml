@@ -6,7 +6,7 @@
         <EditTextPreference
             android:key="pref_watch_exclude_words"
             android:layout="@layout/preference_checkbox"
-            android:summary="不拆开包含这些文字的红包(空格间隔)"
+            android:summary="@string/pref_watch_exclude_words_summary"
             android:title="屏蔽红包文字">
 
         </EditTextPreference>

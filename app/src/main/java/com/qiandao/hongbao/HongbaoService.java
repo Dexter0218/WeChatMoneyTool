@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Parcelable;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -118,19 +119,27 @@ public class HongbaoService extends AccessibilityService {
 
     }
 
-    String match[] = {"专属", "定向"};
 
     /**
      * 鉴别是否私人定制的红包
+     *
      * @param str
      * @return
      */
     private boolean isPersonalTailor(String str) {
-        for (int i = 0; i < match.length; i++) {
-            if (str.contains(match[i])) {
-                return true;
+//        String[] match = {"专属", "定向"};
+        String value = PreferenceManager.getDefaultSharedPreferences(this).getString("pref_watch_exclude_words", "");
+        if (value.length() > 0) {
+            String[] match=value.split(" ");
+            for (int i = 0; i < match.length; i++) {
+                Log.i(TAG,"exculde words:"+match[i]);
+                if (str.contains(match[i])) {
+                    return true;
+                }
             }
         }
+
+
         return false;
     }
 
@@ -249,7 +258,7 @@ public class HongbaoService extends AccessibilityService {
         }
         /*没找到就返回*/
         for (AccessibilityNodeInfo cellNode : fetchNodes) {
-            Log.i(TAG, "红包上的文字："+cellNode.getParent().getChild(0).getText().toString());
+            Log.i(TAG, "红包上的文字：" + cellNode.getParent().getChild(0).getText().toString());
             if (isPersonalTailor(cellNode.getParent().getChild(0).getText().toString()))
                 continue;
             nodesToFetch.add(cellNode);
