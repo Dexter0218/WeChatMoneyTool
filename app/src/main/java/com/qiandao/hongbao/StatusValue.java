@@ -11,7 +11,7 @@ public class StatusValue {
     private static boolean isSupportNotification = true;
     private static boolean isSupportAutoRob = true;
     private static boolean isSupportBlackSreen = true;
-    private static String[] exculdeWords = {};
+    private static String exculdeWords = "";
 
     private StatusValue() {
     }
@@ -42,11 +42,11 @@ public class StatusValue {
         this.isSupportBlackSreen = isSupportBlackSreen;
     }
 
-    public String[] getExculdeWords() {
+    public String getExculdeWords() {
         return exculdeWords;
     }
 
-    public void setExculdeWords(String[] exculdeWords) {
+    public void setExculdeWords(String exculdeWords) {
         this.exculdeWords = exculdeWords;
     }
 

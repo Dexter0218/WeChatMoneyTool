@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
     }
 
     private void initPreferenceValue() {
-        String[] excludeWordses = PreferenceManager.getDefaultSharedPreferences(this).getString("pref_watch_exclude_words", "").split(" ");
+        String excludeWordses = PreferenceManager.getDefaultSharedPreferences(this).getString("pref_watch_exclude_words", "");
         StatusValue.getInstance().setExculdeWords(excludeWordses);
 
         boolean issupportBlackSceen = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_watch_black_screen_notification", true);

@@ -50,12 +50,12 @@ public class SettingsActivity extends PreferenceActivity {
                 String summary = getResources().getString(R.string.pref_watch_exclude_words_summary);
                 if (obj != null && obj.toString().length() > 0) {
                     preference.setSummary(summary + ":" + obj.toString());
-                    StatusValue.getInstance().setExculdeWords(obj.toString().split(" "));
+                    StatusValue.getInstance().setExculdeWords(obj.toString());
                 } else {
                     preference.setSummary(summary);
-                    String[] temp = {};
-                    StatusValue.getInstance().setExculdeWords(temp);
+                    StatusValue.getInstance().setExculdeWords("");
                 }
+
                 return true;
             }
         });

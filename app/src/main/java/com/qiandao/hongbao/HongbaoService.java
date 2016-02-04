@@ -130,14 +130,18 @@ public class HongbaoService extends AccessibilityService {
     private boolean isPersonalTailor(String str) {
 //        String[] match = {"专属", "定向"};
 //        String value = PreferenceManager.getDefaultSharedPreferences(this).getString("pref_watch_exclude_words", "");
-        String[] mExculdeWords = StatusValue.getInstance().getExculdeWords();
-        Log.e(TAG,"mExculdeWords:"+mExculdeWords);
-        for (int i = 0; i < mExculdeWords.length; i++) {
-            Log.i(TAG, "exculde words:" + mExculdeWords[i]);
-            if (str.contains(mExculdeWords[i])) {
-                return true;
+        String mExculdeWords = StatusValue.getInstance().getExculdeWords();
+        if (mExculdeWords != "") {
+            String[] words = mExculdeWords.split(" ");
+            for (int i = 0; i < words.length; i++) {
+                Log.i(TAG, "exculde words:" + words[i]);
+                if (str.contains(words[i])) {
+                    Log.i(TAG, "contains:" + words[i]);
+                    return true;
+                }
             }
         }
+        Log.i(TAG, "No words match");
         return false;
     }
 
