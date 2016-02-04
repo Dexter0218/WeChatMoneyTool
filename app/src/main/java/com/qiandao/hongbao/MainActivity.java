@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,27 +26,35 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainActivity extends Activity {
 
     private static String TAG = "HongbaoMainActivity";
-
-
     private Button switchPlugin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(TAG,"onCreate");
+        Log.i(TAG, "onCreate");
         setContentView(R.layout.activity_main);
-
         CrashReport.initCrashReport(getApplicationContext(), "900019366", false);
         switchPlugin = (Button) findViewById(R.id.button_accessible);
         handleMaterialStatusBar();
         updateServiceStatus();
+        initPreferenceValue();
 
+
+    }
+
+    private void initPreferenceValue() {
+        String[] excludeWordses = PreferenceManager.getDefaultSharedPreferences(this).getString("pref_watch_exclude_words", "").split(" ");
+        StatusValue.getInstance().setExculdeWords(excludeWordses);
+
+        boolean issupportBlackSceen = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_watch_black_screen_notification", true);
+        StatusValue.getInstance().setIsSupportBlackSreen(issupportBlackSceen);
 
     }
 
@@ -97,8 +106,16 @@ public class MainActivity extends Activity {
     }
 
     public void onButtonClicked(View view) {
-        Intent mAccessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-        startActivity(mAccessibleIntent);
+        switch (view.getId()) {
+            case R.id.button_accessible:
+                Intent mAccessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                startActivity(mAccessibleIntent);
+                break;
+            case R.id.button_seting:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 
 

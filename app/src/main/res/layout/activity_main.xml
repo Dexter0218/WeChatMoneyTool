@@ -4,17 +4,37 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="fill_parent"
-        android:layout_height="68dp"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="#e53935"
-        android:elevation="8dp"
-        android:gravity="bottom|center_horizontal"
-        android:paddingBottom="12dp"
-        android:text="签到钱就到"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#fff" />
+        android:elevation="8dp">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="68dp"
+
+            android:gravity="center_vertical"
+            android:text="签到钱就到"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#fff"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <ImageView
+            android:id="@+id/button_seting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="18dp"
+            android:layout_marginRight="18dp"
+            android:onClick="onButtonClicked"
+            android:src="@mipmap/ic_settings"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
 
     <ImageView
         android:id="@+id/imageView"
@@ -43,6 +63,7 @@
         android:layout_marginTop="3dp"
         android:text="仅供测试使用，自行承担风险"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
@@ -51,47 +72,47 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="3dp"
         android:text="请禁止掉微信获取手机信息的权限"
-        android:textColor="@android:color/holo_red_light"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/holo_red_light" />
 
     <TextView
         android:id="@+id/github"
         android:layout_width="fill_parent"
         android:layout_height="20dp"
-        android:gravity="center_horizontal"
-        android:text="反馈你所遇到的问题"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
 
         android:layout_marginBottom="13dp"
+        android:gravity="center_horizontal"
+        android:text="反馈你所遇到的问题"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="#2196f3"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:textColor="#2196f3" />
 
     <Button
         android:id="@+id/button_accessible"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_above="@+id/textView5"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="#fdfdfd"
         android:onClick="onButtonClicked"
         android:text="@string/service_name"
-        android:textColor="#ff666666"
-        android:layout_above="@+id/textView5"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp" />
+        android:textColor="#ff666666" />
 
 
     <TextView
         android:id="@+id/textView5"
         android:layout_width="fill_parent"
         android:layout_height="20dp"
+        android:layout_above="@+id/github"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="15dp"
         android:gravity="center_horizontal"
         android:text="搜索并关注微信公众号:签到钱就到"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="#2196f3"
-        android:layout_above="@+id/github"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="15dp" />
+        android:textColor="#2196f3" />
 </RelativeLayout>

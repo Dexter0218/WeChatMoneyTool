@@ -15,30 +15,38 @@
     <uses-permission android:name="android.permission.READ_LOGS" />
 
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name">
         <activity
-            android:name="com.qiandao.hongbao.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Base.Theme.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
-            android:name="com.qiandao.hongbao.HongbaoService"
+            android:name=".HongbaoService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessible_service_config" />
         </service>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:theme="@style/Base.Theme.AppCompat.Light">
+            >
+        </activity>
     </application>
 
 </manifest>
