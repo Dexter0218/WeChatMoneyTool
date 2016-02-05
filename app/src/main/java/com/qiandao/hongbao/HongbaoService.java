@@ -588,6 +588,7 @@ public class HongbaoService extends AccessibilityService {
         List<AccessibilityNodeInfo> nodes = nodeInfo.findAccessibilityNodeInfosByText(NOTIFICATION_TIP);
         if (!nodes.isEmpty()) {
             AccessibilityNodeInfo nodeToClick = nodes.get(0);
+            if (nodeToClick == null) return false;
             CharSequence contentDescription = nodeToClick.getContentDescription();
 //            Log.e(TAG,"contentDescription:"+contentDescription);
 //            Log.e(TAG,"lastContentDescription:"+lastContentDescription);

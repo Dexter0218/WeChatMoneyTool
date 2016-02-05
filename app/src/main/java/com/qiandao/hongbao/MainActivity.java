@@ -4,6 +4,8 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -102,7 +104,22 @@ public class MainActivity extends Activity {
             switchPlugin.setText("开启插件");
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+        Toast.makeText(this, "版本号：" + getVersionName(), Toast.LENGTH_SHORT).show();
+    }
 
+    private String getVersionName() {
+        String version = "";
+        int versioncode = 0;
+        try {
+            PackageManager packageManager = getPackageManager();
+            // getPackageName()是你当前类的包名，0代表是获取版本信息
+            PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
+            version = packInfo.versionName;
+            versioncode = packInfo.versionCode;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return version + "." + versioncode;
     }
 
     public void onButtonClicked(View view) {
