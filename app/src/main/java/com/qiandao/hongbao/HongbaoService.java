@@ -269,10 +269,13 @@ public class HongbaoService extends AccessibilityService {
         }
         /*没找到就返回*/
         for (AccessibilityNodeInfo cellNode : fetchNodes) {
-            Log.i(TAG, "红包上的文字：" + cellNode.getParent().getChild(0).getText().toString());
-            if (isPersonalTailor(cellNode.getParent().getChild(0).getText().toString()))
-                continue;
-            nodesToFetch.add(cellNode);
+            if (cellNode.getParent() != null && cellNode.getParent().getClassName().equals("android.widget.LinearLayout")) {
+                Log.i(TAG, "红包上的文字：" + cellNode.getParent().getChild(0).getText().toString());
+                if (isPersonalTailor(cellNode.getParent().getChild(0).getText().toString()))
+                    continue;
+                nodesToFetch.add(cellNode);
+            }
+
         }
     }
 
