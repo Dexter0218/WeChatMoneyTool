@@ -46,9 +46,6 @@ public class MainActivity extends Activity {
         switchPlugin = (Button) findViewById(R.id.button_accessible);
         handleMaterialStatusBar();
         updateServiceStatus();
-        initPreferenceValue();
-
-
     }
 
     private void initPreferenceValue() {
@@ -57,6 +54,9 @@ public class MainActivity extends Activity {
 
         boolean issupportBlackSceen = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_watch_black_screen_notification", true);
         StatusValue.getInstance().setIsSupportBlackSreen(issupportBlackSceen);
+
+        boolean isSupportAutoRob = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_click_open_hongbao", true);
+        StatusValue.getInstance().setIsSupportAutoRob(isSupportAutoRob);
 
     }
 
@@ -74,6 +74,7 @@ public class MainActivity extends Activity {
         super.onResume();
         Log.i(TAG, "onResume");
         updateServiceStatus();
+        initPreferenceValue();
     }
 
     @Override

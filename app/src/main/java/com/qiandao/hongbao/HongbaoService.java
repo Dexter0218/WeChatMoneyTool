@@ -131,11 +131,11 @@ public class HongbaoService extends AccessibilityService {
 //        String[] match = {"专属", "定向"};
 //        String value = PreferenceManager.getDefaultSharedPreferences(this).getString("pref_watch_exclude_words", "");
         String mExculdeWords = StatusValue.getInstance().getExculdeWords();
-        if (mExculdeWords != "") {
+        if (!mExculdeWords.equals("")) {
             String[] words = mExculdeWords.split(" ");
             for (int i = 0; i < words.length; i++) {
                 Log.i(TAG, "exculde words:" + words[i]);
-                if (str.contains(words[i])) {
+                if (!words[i].equals("") && str.contains(words[i])) {
                     Log.i(TAG, "contains:" + words[i]);
                     return true;
                 }
