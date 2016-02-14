@@ -86,9 +86,9 @@ public class MainActivity extends Activity {
 
     private void updateServiceStatus() {
         boolean serviceEnabled = false;
-
         AccessibilityManager accessibilityManager =
                 (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
+        if (accessibilityManager == null) return;
         List<AccessibilityServiceInfo> accessibilityServices =
                 accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC);
         for (AccessibilityServiceInfo info : accessibilityServices) {
