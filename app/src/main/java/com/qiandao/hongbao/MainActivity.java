@@ -126,8 +126,13 @@ public class MainActivity extends Activity {
     public void onButtonClicked(View view) {
         switch (view.getId()) {
             case R.id.button_accessible:
-                Intent mAccessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                startActivity(mAccessibleIntent);
+                try {
+                    Intent mAccessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                    startActivity(mAccessibleIntent);
+                } catch (Exception e) {
+                    Toast.makeText(this, "遇到一些问题,请手动打开系统“设置”->找到“无障碍”或者“辅助服务”->“签到钱就到”", Toast.LENGTH_LONG).show();
+                }
+
                 break;
             case R.id.button_seting:
                 Intent intent = new Intent(this, SettingsActivity.class);
