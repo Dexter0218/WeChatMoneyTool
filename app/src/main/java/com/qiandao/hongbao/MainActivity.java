@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.qiandao.hongbao.util.ConnectivityUtil;
+import com.qiandao.hongbao.util.UpdateTask;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.lang.reflect.Field;
@@ -79,6 +81,9 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
         Log.i(TAG, "onResume");
         updateServiceStatus();
         initPreferenceValue();
+        // Check for update when WIFI is connected or on first time.
+        if (ConnectivityUtil.isWifi(this) || UpdateTask.count == 0)
+            new UpdateTask(this, false).update();
     }
 
     @Override
@@ -107,7 +112,7 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
             switchPlugin.setText("开启插件");
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-        Toast.makeText(this, "版本号：" + getVersionName(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "版本号：" + getVersionName(), Toast.LENGTH_SHORT).show();
     }
 
     private String getVersionName() {

@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.qiandao.hongbao.util.UpdateTask;
+
 public class SettingsActivity extends PreferenceActivity {
     private static final String TAG = "SettingsActivity";
     private SharedPreferences sharedPreferences;
@@ -73,6 +75,9 @@ public class SettingsActivity extends PreferenceActivity {
             //自动拆红包
             case "pref_click_open_hongbao":
                 StatusValue.getInstance().setIsSupportAutoRob(sharedPreferences.getBoolean(key, true));
+                break;
+            case "pref_check_update":
+                new UpdateTask(this, true).update();
                 break;
         }
 

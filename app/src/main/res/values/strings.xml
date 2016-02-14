@@ -7,4 +7,10 @@
     <string name="pref_watch_exclude_words_summary">不去抢包含这些文字的红包(用空格隔开)</string>
     <string name="pref_watch_notification_summary">需要开启微信消息通知,部分手机可能不支持</string>
     <string name="pref_click_open_summary">是否自动点击“開”，拆红包</string>
+    <string name="update_already_latest">已经是最新版本</string>
+    <string name="update_new_seg1">发现新版本(</string>
+    <string name="update_new_seg2">),正在跳转到下载界面</string>
+    <string name="update_new_seg3">),请进入右上角的设置，检查更新，或从微信公众号获取最新版本</string>
+    <string name="update_error">遇到一些问题,请前往微信公众号"签到钱就到"获取最新版本</string>
+    <string name="check_update">若有更新会跳转到浏览器下载</string>
 </resources>

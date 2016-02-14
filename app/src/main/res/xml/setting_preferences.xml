@@ -9,18 +9,23 @@
             android:summary="@string/pref_watch_exclude_words_summary"
             android:title="抢不起"></EditTextPreference>
         <CheckBoxPreference
-            android:key="pref_watch_black_screen_notification"
             android:checked="true"
             android:defaultValue="true"
+            android:key="pref_watch_black_screen_notification"
             android:layout="@layout/preference_checkbox"
             android:summary="@string/pref_watch_notification_summary"
             android:title="黑屏抢"></CheckBoxPreference>
         <CheckBoxPreference
-            android:key="pref_click_open_hongbao"
             android:checked="true"
             android:defaultValue="true"
+            android:key="pref_click_open_hongbao"
             android:layout="@layout/preference_checkbox"
             android:summary="@string/pref_click_open_summary"
             android:title="自动拆"></CheckBoxPreference>
+        <Preference
+            android:key="pref_check_update"
+            android:layout="@layout/preference_checkbox"
+            android:summary="@string/check_update"
+            android:title="检查更新"></Preference>
     </PreferenceCategory>
 </PreferenceScreen>
