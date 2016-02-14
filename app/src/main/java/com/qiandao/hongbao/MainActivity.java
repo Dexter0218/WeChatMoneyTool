@@ -32,10 +32,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AccessibilityManager.AccessibilityStateChangeListener {
 
     private static String TAG = "HongbaoMainActivity";
     private Button switchPlugin;
+    private AccessibilityManager accessibilityManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,9 @@ public class MainActivity extends Activity {
         Log.i(TAG, "onCreate");
         setContentView(R.layout.activity_main);
         CrashReport.initCrashReport(getApplicationContext(), "900019366", false);
+        accessibilityManager =
+                (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
+        accessibilityManager.addAccessibilityStateChangeListener(this);
         switchPlugin = (Button) findViewById(R.id.button_accessible);
         handleMaterialStatusBar();
         updateServiceStatus();
@@ -86,8 +90,6 @@ public class MainActivity extends Activity {
 
     private void updateServiceStatus() {
         boolean serviceEnabled = false;
-        AccessibilityManager accessibilityManager =
-                (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         if (accessibilityManager == null) return;
         List<AccessibilityServiceInfo> accessibilityServices =
                 accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC);
@@ -145,5 +147,10 @@ public class MainActivity extends Activity {
     public void openGithub(View view) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/geeeeeeeeek/WeChatLuckyMoney"));
         startActivity(browserIntent);
+    }
+
+    @Override
+    public void onAccessibilityStateChanged(boolean enabled) {
+        updateServiceStatus();
     }
 }
