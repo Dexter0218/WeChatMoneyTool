@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
         List<AccessibilityServiceInfo> accessibilityServices =
                 accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC);
         for (AccessibilityServiceInfo info : accessibilityServices) {
-            if (info.getId().equals(getPackageName() + "/.HongbaoService")) {
+            if (info != null && info.getId() != null && info.getId().equals(getPackageName() + "/.HongbaoService")) {
                 serviceEnabled = true;
             }
         }
