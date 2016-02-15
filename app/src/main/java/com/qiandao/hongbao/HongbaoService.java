@@ -97,7 +97,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                     if (Stage.getInstance().getCurrentStage() == Stage.FETCHED_STAGE) {
                         Log.e(TAG, "Stage.FETCHED_STAGE_>send()");
                         notification.contentIntent.send();
-                    } else {
+                    } else if (Stage.getInstance().getCurrentStage() != Stage.OPENING_STAGE) {
                         Stage.getInstance().entering(Stage.FETCHED_STAGE);
                         Log.e(TAG, "呵呵" + Stage.getInstance().getCurrentStage());
                         notification.contentIntent.send();
@@ -222,7 +222,6 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
 
                         if (id == null) return;
                         mCurrentNode = node;
-                        Log.e("wupeng","add:"+mCurrentNode.toString());
                         fetchedIdentifiers.add(id);
 
                         // 调试信息，在每次打开红包后打印出已经获取的红包
@@ -243,7 +242,6 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 Log.d(TAG, "DELETING_STAGE");
                 checkBackFromHongbaoPage(nodeInfo);
                 if (mCurrentNode != null && mCurrentNode.getParent() != null) {
-                    Log.e("wupeng",mCurrentNode.toString());
                     mCurrentNode.getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
                     Log.e(TAG, "正在删除");
                     Stage.getInstance().entering(Stage.DELETED_STAGE);
