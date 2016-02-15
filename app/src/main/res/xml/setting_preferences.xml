@@ -22,6 +22,11 @@
             android:layout="@layout/preference_checkbox"
             android:summary="@string/pref_click_open_summary"
             android:title="自动拆"></CheckBoxPreference>
+        <com.qiandao.hongbao.SeekBarPreference
+            android:key="pref_open_delay"
+            android:title="延时拆开红包"
+            pref_kind="pref_open_delay"
+            android:layout="@layout/preference_checkbox" />
         <Preference
             android:key="pref_check_update"
             android:layout="@layout/preference_checkbox"

@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Parcelable;
 import android.os.PowerManager;
@@ -26,7 +27,7 @@ import java.util.regex.Pattern;
  * <p/>
  * 抢红包主要的逻辑部分
  */
-public class HongbaoService extends AccessibilityService {
+public class HongbaoService extends AccessibilityService implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static String TAG = "HongbaoService";
     /**
      * 已获取的红包队列
@@ -61,6 +62,7 @@ public class HongbaoService extends AccessibilityService {
     private boolean isPrepare = false;
     //红包软件是否可用
     private boolean isHongbaoAppOK = false;
+    SharedPreferences sharedPreferences;
 
     /**
      * AccessibilityEvent的回调方法
@@ -79,7 +81,6 @@ public class HongbaoService extends AccessibilityService {
                 return;
             }
 
-
             if (!isScreenOn(this)) {
                 if (!StatusValue.getInstance().isSupportBlackSreen()) return;
                 lightScreen();
@@ -96,7 +97,8 @@ public class HongbaoService extends AccessibilityService {
                     if (Stage.getInstance().getCurrentStage() == Stage.FETCHED_STAGE) {
                         Log.e(TAG, "Stage.FETCHED_STAGE_>send()");
                         notification.contentIntent.send();
-                    } else if (Stage.getInstance().getCurrentStage() != Stage.OPENING_STAGE) {
+                    } else {
+                        Stage.getInstance().entering(Stage.FETCHED_STAGE);
                         Log.e(TAG, "呵呵" + Stage.getInstance().getCurrentStage());
                         notification.contentIntent.send();
                     }
@@ -147,7 +149,7 @@ public class HongbaoService extends AccessibilityService {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void handleWindowChange(AccessibilityNodeInfo nodeInfo) {
-
+        if (nodeInfo == null) return;
         switch (Stage.getInstance().getCurrentStage()) {
             case Stage.OPENING_STAGE:
                 Log.d(TAG, "OPENING_STAGE");
@@ -168,7 +170,7 @@ public class HongbaoService extends AccessibilityService {
                         }
                     } else {
                         Stage.getInstance().entering(Stage.DELETING_STAGE);
-                        performMyGlobalAction(GLOBAL_ACTION_BACK);
+//                        performMyGlobalAction(GLOBAL_ACTION_BACK);
                     }
                 } else {
                     Log.e(TAG, "reOpen");
@@ -187,9 +189,19 @@ public class HongbaoService extends AccessibilityService {
                 }
                 ttl = 0;
                 isHongbaoAppOK = false;
-                Stage.getInstance().entering(Stage.FETCHED_STAGE);
-                Log.e(TAG, "!@!!!!!!!!!!!!!!!!!!!!!!回退");
-                performMyGlobalAction(GLOBAL_ACTION_BACK);
+
+                if (!StatusValue.getInstance().isSupportAutoRob()) {
+                    Log.e(TAG, "不拆4");
+                    if (!checkBackFromHongbaoPage(nodeInfo)) {
+                        Stage.getInstance().entering(Stage.FETCHED_STAGE);
+                    }
+                } else {
+                    Stage.getInstance().entering(Stage.DELETING_STAGE);
+//                        performMyGlobalAction(GLOBAL_ACTION_BACK);
+                }
+//                Stage.getInstance().entering(Stage.FETCHED_STAGE);
+//                Log.e(TAG, "!@!!!!!!!!!!!!!!!!!!!!!!回退");
+//                performMyGlobalAction(GLOBAL_ACTION_BACK);
                 break;
             case Stage.FETCHED_STAGE:
                 Log.d(TAG, "FETCHED_STAGE");
@@ -210,6 +222,7 @@ public class HongbaoService extends AccessibilityService {
 
                         if (id == null) return;
                         mCurrentNode = node;
+                        Log.e("wupeng","add:"+mCurrentNode.toString());
                         fetchedIdentifiers.add(id);
 
                         // 调试信息，在每次打开红包后打印出已经获取的红包
@@ -230,6 +243,7 @@ public class HongbaoService extends AccessibilityService {
                 Log.d(TAG, "DELETING_STAGE");
                 checkBackFromHongbaoPage(nodeInfo);
                 if (mCurrentNode != null && mCurrentNode.getParent() != null) {
+                    Log.e("wupeng",mCurrentNode.toString());
                     mCurrentNode.getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
                     Log.e(TAG, "正在删除");
                     Stage.getInstance().entering(Stage.DELETED_STAGE);
@@ -314,20 +328,30 @@ public class HongbaoService extends AccessibilityService {
             Log.e(TAG, "successNoticeNodes:" + successNoticeNodes.getClassName());
         }
         if (successNoticeNodes != null && successNoticeNodes.getClassName().equals("android.widget.Button")) {
-            AccessibilityNodeInfo openNode = successNoticeNodes;
-            if (!StatusValue.getInstance().isSupportAutoRob()) {
-                Log.e(TAG, "不拆");
-                return 0;
-            }
+            final AccessibilityNodeInfo openNode = successNoticeNodes;
             Stage.getInstance().entering(Stage.OPENED_STAGE);
-            openNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-            Log.e(TAG, "拆红包");
-            try {
-                Thread.sleep(500);
-            } catch (Exception e) {
+            int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 1000;
+            new android.os.Handler().postDelayed(
+                    new Runnable() {
+                        public void run() {
+                            try {
+                                if (StatusValue.getInstance().isSupportAutoRob()) {
+                                    openNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                }
+                                Log.e(TAG, "拆红包");
 
+                            } catch (Exception e) {
+
+
+                            }
+                        }
+                    },
+                    delayFlag);
+            if (checkBackFromHongbaoPage(openNode)) {
+                return 0;
+            } else {
+                return -1;
             }
-            return 0;
         } else {
             try {
                 Thread.sleep(5);
@@ -339,6 +363,13 @@ public class HongbaoService extends AccessibilityService {
             ttl += 1;
             return -1;
         }
+    }
+
+    @Override
+    protected void onServiceConnected() {
+        super.onServiceConnected();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     /**
@@ -601,5 +632,10 @@ public class HongbaoService extends AccessibilityService {
             }
         }
         return false;
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+
     }
 }
