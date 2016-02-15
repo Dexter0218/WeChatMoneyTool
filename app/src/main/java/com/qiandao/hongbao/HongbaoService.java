@@ -6,11 +6,13 @@ import android.app.KeyguardManager;
 import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Parcelable;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Display;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -41,7 +43,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     /**
      * 允许的最大尝试次数
      */
-    private static final int MAX_TTL = 24;
+    private static final int MAX_TTL = 50;
 
     private boolean flag = false;
     /**
@@ -85,10 +87,14 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 if (!StatusValue.getInstance().isSupportBlackSreen()) return;
                 lightScreen();
                 isPrepare = true;
+            } else {
+                isPrepare = false;
             }
             if (isLockOn()) {
                 unLock();
                 isPrepare = true;
+            } else {
+                isPrepare = isPrepare | false;
             }
             Parcelable parcelable = event.getParcelableData();
             if (parcelable instanceof Notification) {
@@ -328,7 +334,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         if (successNoticeNodes != null && successNoticeNodes.getClassName().equals("android.widget.Button")) {
             final AccessibilityNodeInfo openNode = successNoticeNodes;
             Stage.getInstance().entering(Stage.OPENED_STAGE);
-            int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 1000;
+            int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 500;
             new android.os.Handler().postDelayed(
                     new Runnable() {
                         public void run() {
@@ -351,11 +357,6 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 return -1;
             }
         } else {
-            try {
-                Thread.sleep(5);
-            } catch (Exception e) {
-
-            }
             Log.e(TAG, "正在打开");
             Stage.getInstance().entering(Stage.OPENING_STAGE);
             ttl += 1;
@@ -500,12 +501,14 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
      */
     private boolean checkBackFromHongbaoPage(AccessibilityNodeInfo nodeInfo) {
         if (nodeInfo != null) {
+            Log.e(TAG, "checkBackFromHongbaoPage");
             List<AccessibilityNodeInfo> hongbaoDetailNodes = nodeInfo.findAccessibilityNodeInfosByText("红包详情");
 //            List<AccessibilityNodeInfo> successNodes2 = nodeInfo.findAccessibilityNodeInfosByText("微信安全支付");
             if (!hongbaoDetailNodes.isEmpty()) {
                 for (int i = 0; i < hongbaoDetailNodes.size(); i++) {
+                    Log.e(TAG, "checkBackFromHongbaoPage_index:" + i);
                     if (hongbaoDetailNodes.get(i).getParent() != null && hongbaoDetailNodes.get(i).getParent().getChildCount() == 3 && hongbaoDetailNodes.get(i).getParent().getChild(2).getText().equals("微信安全支付")) {
-                        Stage.getInstance().entering(Stage.DELETING_STAGE);
+//                        Stage.getInstance().entering(Stage.DELETING_STAGE);
                         Log.e(TAG, "卡在详情界面，回退");
                         performMyGlobalAction(GLOBAL_ACTION_BACK);
                         return true;
@@ -586,22 +589,22 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
      * @return true when (at least one) screen is on
      */
     public boolean isScreenOn(Context context) {
-//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-//            DisplayManager dm = (DisplayManager) context
-//                    .getSystemService(Context.DISPLAY_SERVICE);
-//            boolean screenOn = false;
-//            for (Display display : dm.getDisplays()) {
-//                if (display.getState() != Display.STATE_OFF) {
-//                    screenOn = true;
-//                }
-//            }
-//            return screenOn;
-//        } else {
-        PowerManager pm = (PowerManager) context
-                .getSystemService(Context.POWER_SERVICE);
-        // noinspection deprecation
-        return pm.isScreenOn();
-//        }
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            DisplayManager dm = (DisplayManager) context
+                    .getSystemService(Context.DISPLAY_SERVICE);
+            boolean screenOn = false;
+            for (Display display : dm.getDisplays()) {
+                if (display.getState() != Display.STATE_OFF) {
+                    screenOn = true;
+                }
+            }
+            return screenOn;
+        } else {
+            PowerManager pm = (PowerManager) context
+                    .getSystemService(Context.POWER_SERVICE);
+            // noinspection deprecation
+            return pm.isScreenOn();
+        }
     }
 
     /**
