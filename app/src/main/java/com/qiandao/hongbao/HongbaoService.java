@@ -508,7 +508,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 for (int i = 0; i < hongbaoDetailNodes.size(); i++) {
                     Log.e(TAG, "checkBackFromHongbaoPage_index:" + i);
                     if (hongbaoDetailNodes.get(i).getParent() != null && hongbaoDetailNodes.get(i).getParent().getChildCount() == 3 && hongbaoDetailNodes.get(i).getParent().getChild(2).getText().equals("微信安全支付")) {
-//                        Stage.getInstance().entering(Stage.DELETING_STAGE);
+                        Stage.getInstance().entering(Stage.DELETING_STAGE);
                         Log.e(TAG, "卡在详情界面，回退");
                         performMyGlobalAction(GLOBAL_ACTION_BACK);
                         return true;
