@@ -10,3 +10,5 @@ android:
   - build-tools-23.0.1
   - android-L
   - extra
+before_install:
+ - chmod +x gradlew
