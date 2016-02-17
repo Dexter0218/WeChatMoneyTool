@@ -5,5 +5,5 @@
 .DS_Store
 /build
 /captures
-/apk_key.jks
+/qiandao.jks
 /gradle.properties
