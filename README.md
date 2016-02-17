@@ -6,11 +6,9 @@
 
 欢迎微信关注个人公众号“签到钱就到”，搜素“qiandaolou”。
 
-你正在查看的是从[**dev分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/dev)拷贝后，修改完善的版本，由于原分支包含大量实验性的修改，且不再更新，所以挪来自己学习玩玩。
+你正在查看的是从https://github.com/geeeeeeeeek/WeChatLuckyMoney[**dev分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/dev)拷贝过来的代码，添加了部分修改，后续的修改也参考了其stable分支，由于原dev分支包含大量实验性的修改，且不再更新，所以挪来自己学习玩玩，后面有很多功能是参考其stable分支增加。
 
-如果你希望看原作者的稳定版请切换到[**stable分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/stable)。
-
-> **注：** 这里的红包插件，能使用但无法保证稳定性。
+如果你希望看原作者的稳定版请点击[**stable分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/stable)。
 
 
 
@@ -19,7 +17,7 @@
 1. 可以抢收到的的所有微信红包。
 2. 自动删除已经戳过的红包，避免频繁点击影响正常使用。
 3. 性能优化，感受不到插件的存在，可一直后台开启，不影响日常聊天。
-5. 由于这是一份教学代码，项目的文档和注释都比较完整，代码适合阅读。
+5. 由于这是第一份学习如何使用github的代码，若很多不规范使用请见谅。
 
 ## 实现原理
 
@@ -281,9 +279,9 @@ return -1;
 
 ## 版权与免责说明
 
-本项目源自小米今年秋季发布会时演示的抢红包测试[源码](https://github.com/XiaoMi/LuckyMoneyTool)。原作者[**stable分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/stable)分支基于此代码继续开发，dev分支重写了几乎所有的逻辑代码。
+本项目源自小米今年秋季发布会时演示的抢红包测试[源码](https://github.com/XiaoMi/LuckyMoneyTool)。原作者[**stable分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/stable)分支基于[源码](https://github.com/XiaoMi/LuckyMoneyTool)继续开发，dev分支重写了几乎所有的逻辑代码。
 
-这里基于其[**dev分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/dev)码继续开发，增加了自动删除，黑屏解锁抢等功能。
+这里，你目前所在的页面，也就是基于其[**dev分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/dev)码继续开发，增加了自动删除，黑屏解锁抢等功能。
 由于插件可能会改变自然的微信交互方式，这份代码仅可用于教学目的，不得更改后用于其他用途。对于使用插件时可能发生的任何情形，由使用者自行承担，包括但不限于“禁用红包功能”、“微信封号”。
 
 项目使用MIT许可证。在理解可能的风险后，你可以将代码用于任何用途。
