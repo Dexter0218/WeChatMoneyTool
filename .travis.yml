@@ -13,6 +13,5 @@ android:
 
 before_install:
 - gem install fir-cli
-- openssl aes-256-cbc -K $encrypted_b4b4a3ef4d53_key -iv $encrypted_b4b4a3ef4d53_iv
-  -in qiandao.jks.enc -out qiandao.jks -d
+- openssl aes-256-cbc -K $encrypted_b4b4a3ef4d53_key -iv $encrypted_b4b4a3ef4d53_iv -in qiandao.jks.enc -out qiandao.jks -d
 - chmod +x gradlew
