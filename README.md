@@ -1,14 +1,14 @@
 # 微信抢红包插件 
-hello
+
 这个Android插件可以帮助你在微信群聊抢红包时战无不胜。当检测到红包时，插件会自动点击屏幕，人工点击的速度无法比拟。
 
 目前，开启了该功能后，可以在任意界面抢微信红包，部分机器可以实现锁屏后抢。
 
 欢迎微信关注个人公众号“签到钱就到”，搜素“qiandaolou”。
 
-你正在查看的是从https://github.com/geeeeeeeeek/WeChatLuckyMoney[**dev分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/dev)拷贝过来的代码，添加了部分修改，后续的修改也参考了其stable分支，由于原dev分支包含大量实验性的修改，且不再更新，所以挪来自己学习玩玩，后面有很多功能是参考其stable分支增加。
+你正在查看的是从`https://github.com/geeeeeeeeek/WeChatLuckyMoney`的[**dev分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/dev)拷贝过来的代码，添加了部分修改，后续的修改也参考了其`stable`分支，由于原先`dev`分支包含大量实验性的修改，且不再更新，所以挪来自己学习，后面有很多功能是参考其`stable`分支增加。
 
-如果你希望看原作者的稳定版请点击[**stable分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/stable)。
+如果你希望看原作者的稳定版请点击[**stable分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/stable)，非常感谢原作者们，在此表示感谢！
 
 
 
