@@ -21,3 +21,5 @@ deploy:
   file: app/build/outputs/apk/app-release.apk
   on:
     repo: Dexter0218/WeChatMoneyTool
+    branch: master
+    tags: true
