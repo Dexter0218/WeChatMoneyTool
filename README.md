@@ -8,7 +8,7 @@
 
 你正在查看的是从`https://github.com/geeeeeeeeek/WeChatLuckyMoney`的[**dev分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/dev)拷贝过来的代码，添加了部分修改，后续的修改也参考了其`stable`分支，由于原先`dev`分支包含大量实验性的修改，且不再更新，所以挪来自己学习，后面有很多功能是参考其`stable`分支增加。
 
-如果你希望看原作者的稳定版请点击[**stable分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/stable)，非常感谢原作者们，在此表示感谢！
+这是我自己向原作者一步一步学习的过程记录，如果你希望看原作者的稳定版请点击[**stable分支**](https://github.com/geeeeeeeeek/WeChatLuckyMoney/tree/stable)，非常感谢原作者们，在此表示感谢！
 
 
 
