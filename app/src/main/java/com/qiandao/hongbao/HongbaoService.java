@@ -18,6 +18,8 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
 
 
+import com.qiandao.hongbao.util.HongbaoLogger;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,6 +67,13 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     //红包软件是否可用
     private boolean isHongbaoAppOK = false;
     SharedPreferences sharedPreferences;
+    private HongbaoLogger logger;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        logger = new HongbaoLogger(this);
+    }
 
     /**
      * AccessibilityEvent的回调方法
@@ -251,6 +260,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                     mCurrentNode.getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
                     Log.e(TAG, "正在删除");
                     Stage.getInstance().entering(Stage.DELETED_STAGE);
+                    logger.getAllLogs();
                 }
                 break;
             case Stage.DELETED_STAGE:
@@ -503,13 +513,38 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         if (nodeInfo != null) {
             Log.e(TAG, "checkBackFromHongbaoPage");
             List<AccessibilityNodeInfo> hongbaoDetailNodes = nodeInfo.findAccessibilityNodeInfosByText("红包详情");
-//            List<AccessibilityNodeInfo> successNodes2 = nodeInfo.findAccessibilityNodeInfosByText("微信安全支付");
+            List<AccessibilityNodeInfo> moneyNodes = nodeInfo.findAccessibilityNodeInfosByText("已存入零钱");
+            List<AccessibilityNodeInfo> senderNodes = nodeInfo.findAccessibilityNodeInfosByText("的红包");
+
             if (!hongbaoDetailNodes.isEmpty()) {
                 for (int i = 0; i < hongbaoDetailNodes.size(); i++) {
                     Log.e(TAG, "checkBackFromHongbaoPage_index:" + i);
                     if (hongbaoDetailNodes.get(i).getParent() != null && hongbaoDetailNodes.get(i).getParent().getChildCount() == 3 && hongbaoDetailNodes.get(i).getParent().getChild(2).getText().equals("微信安全支付")) {
                         Stage.getInstance().entering(Stage.DELETING_STAGE);
                         Log.e(TAG, "卡在详情界面，回退");
+                        String money = "";
+                        String sender = "";
+                        if (!moneyNodes.isEmpty()) {
+                            for (int j = 0; j < moneyNodes.size(); j++) {
+
+                                money = moneyNodes.get(j).getParent().getChild(2).getText().toString();
+                                Log.e("wupeng", "money:" + money);
+                            }
+                        }
+                        if (!senderNodes.isEmpty()) {
+                            for (int j = 0; j < senderNodes.size(); j++) {
+                                String temp = senderNodes.get(j).getText().toString();
+                                if (temp.endsWith("的红包")) {
+                                    sender = senderNodes.get(j).getText().toString().substring(0, temp.length() - 3);
+                                }
+                                Log.e("wupeng", "sender:" + sender);
+                            }
+                        }
+                        if (money != "" && sender != "") {
+                            logger.writeHongbaoLog(sender, "祝福语", "3");
+                        }
+
+
                         performMyGlobalAction(GLOBAL_ACTION_BACK);
                         return true;
                     }
