@@ -68,11 +68,13 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     private boolean isHongbaoAppOK = false;
     SharedPreferences sharedPreferences;
     private HongbaoLogger logger;
+    String money = "";
+    String sender = "";
 
     @Override
     public void onCreate() {
         super.onCreate();
-        logger = new HongbaoLogger(this);
+        logger = HongbaoLogger.getInstance(this);
     }
 
     /**
@@ -260,7 +262,6 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                     mCurrentNode.getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
                     Log.e(TAG, "正在删除");
                     Stage.getInstance().entering(Stage.DELETED_STAGE);
-                    logger.getAllLogs();
                 }
                 break;
             case Stage.DELETED_STAGE:
@@ -422,6 +423,9 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.LinearLayout")) {
                     Log.e(TAG, "點擊刪除");
                     deleteNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    if (money != "" && sender != "") {
+                        logger.writeHongbaoLog(sender, "祝福语", money);
+                    }
                     flag = false;
                     isHongbaoAppOK = false;
                     if (isPrepare && nodesToFetch.size() == 0) {
@@ -522,8 +526,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                     if (hongbaoDetailNodes.get(i).getParent() != null && hongbaoDetailNodes.get(i).getParent().getChildCount() == 3 && hongbaoDetailNodes.get(i).getParent().getChild(2).getText().equals("微信安全支付")) {
                         Stage.getInstance().entering(Stage.DELETING_STAGE);
                         Log.e(TAG, "卡在详情界面，回退");
-                        String money = "";
-                        String sender = "";
+
                         if (!moneyNodes.isEmpty()) {
                             for (int j = 0; j < moneyNodes.size(); j++) {
 
@@ -540,11 +543,6 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                                 Log.e("wupeng", "sender:" + sender);
                             }
                         }
-                        if (money != "" && sender != "") {
-                            logger.writeHongbaoLog(sender, "祝福语", "3");
-                        }
-
-
                         performMyGlobalAction(GLOBAL_ACTION_BACK);
                         return true;
                     }
