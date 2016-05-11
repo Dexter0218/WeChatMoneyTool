@@ -6,11 +6,31 @@
         <EditTextPreference
             android:key="pref_watch_exclude_words"
             android:layout="@layout/preference_checkbox"
-            android:summary="不拆开包含这些文字的红包(空格间隔)"
-            android:title="屏蔽红包文字">
-
-        </EditTextPreference>
-
+            android:summary="@string/pref_watch_exclude_words_summary"
+            android:title="抢不起"></EditTextPreference>
+        <CheckBoxPreference
+            android:checked="true"
+            android:defaultValue="true"
+            android:key="pref_watch_black_screen_notification"
+            android:layout="@layout/preference_checkbox"
+            android:summary="@string/pref_watch_notification_summary"
+            android:title="黑屏抢"></CheckBoxPreference>
+        <CheckBoxPreference
+            android:checked="true"
+            android:defaultValue="true"
+            android:key="pref_click_open_hongbao"
+            android:layout="@layout/preference_checkbox"
+            android:summary="@string/pref_click_open_summary"
+            android:title="自动拆"></CheckBoxPreference>
+        <com.qiandao.hongbao.SeekBarPreference
+            android:key="pref_open_delay"
+            android:title="延时拆开红包"
+            pref_kind="pref_open_delay"
+            android:layout="@layout/preference_checkbox" />
+        <Preference
+            android:key="pref_check_update"
+            android:layout="@layout/preference_checkbox"
+            android:summary="@string/check_update"
+            android:title="检查更新"></Preference>
     </PreferenceCategory>
-
 </PreferenceScreen>

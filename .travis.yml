@@ -1,0 +1,35 @@
+language: android
+sudo: false
+jdk: oraclejdk7
+env:
+  matrix:
+  - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a armeabi
+android:
+  components:
+  - platform-tools
+  - build-tools-23.0.1
+  - android-L
+  - extra
+before_install:
+- openssl aes-256-cbc -K $encrypted_97d1a4735983_key -iv $encrypted_97d1a4735983_iv
+  -in dexter0218.jks.enc -out dexter0218.jks -d
+- chmod +x gradlew
+before_script:
+- echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+- emulator -avd test -no-skin -no-audio -no-window &
+- adb wait-for-device
+- adb shell input keyevent 82 &
+- gem install fir-cli
+script:
+- ./gradlew assembleRelease
+deploy:
+  provider: releases
+  api_key:
+    secure: IGZaZHJuidj17kMPi7S/EZBWFe8w2xz9WOy8EgruIkZ0UvsaWhW+9ztaDkmY3Ze01Lj9QstS77pX4Udbq29+3qizM+0VTQ6F9vXrDWPPyAQicyOzWDgM6tGtzZqEfPy4krF7muaNZ5SDuYs0d00kpUt/nJbYk65QvlWXQ5JNkhLACJrcPNfehBpboX0Iw/npn5N9NUPr5eIhUhlTeiBWfc11QFBwM0URzXuMKmRZj717KGGszteRIYnxJFNP9+hhT7c4zgPopxS9PFiEOsbQrBJ/WdA2xY8MAkw1qZiDSM6QId7HqcTyf8zFf5UcTOC5f5n89BO2I23mOFBUNyh8tqwjMM1hM9izI9f6Ejs4lQc4BzrRRXbeIzQ9UJ5uY3HPV49322jjoYLcO4NcQMgimkoyJbZ1PgdEnMAhJrNp4wcQFPrOU1t6u8dG96AFwdnoQdZfLXTv9sMWoE2FuhJjdHTJIPmdQoMCqNy7QW1Dipo90qaOP9TceiWx+GuB9a/sD1ry8uMrwFXGV2B11e8dn60xJLyjoLA5zEuDoJzoPPVaKEMnn9G5RcS1Rv4BBBtjQ5o9D83963rTJe1SXk4ihNJw0Ty+uCzhoVO4WJSsbRXmcpL/TyuGiqJdEC/zZalitFJIb6K5H5nxfIwS8NVrr+99QDcKBHgyMl+7bQslja4=
+  file: app/build/outputs/apk/app-release.apk
+  on:
+    repo: Dexter0218/WeChatMoneyTool
+    branch: master
+    tags: true
+after_deploy:
+- fir p app/build/outputs/apk/app-release.apk -T $FIR_TOKEN -c "`git cat-file tag $TRAVIS_TAG`"
