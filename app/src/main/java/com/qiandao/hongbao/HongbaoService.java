@@ -43,7 +43,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     /**
      * 允许的最大尝试次数
      */
-    private static final int MAX_TTL = 50;
+    private static final int MAX_TTL = 100;
 
     private boolean flag = false;
     /**
