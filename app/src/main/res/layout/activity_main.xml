@@ -145,8 +145,8 @@
 
         <ImageView
             android:id="@+id/icon_uber"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="15dp"
@@ -165,7 +165,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
-                android:text="前 3 次乘车均可获得 ￥16 优惠"
+                android:text="前 3 次乘车均可获得 ￥10 优惠"
                 android:textColor="#858585" />
 
             <TextView
@@ -194,8 +194,8 @@
 
         <ImageView
             android:id="@+id/icon_wechat"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="15dp"

@@ -153,8 +153,8 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
 
     public void openUber(View view) {
         Intent webViewIntent = new Intent(this, WebViewActivity.class);
-        webViewIntent.putExtra("title", "Uber 优惠乘车机会(优惠码rgk2wue)");
-        webViewIntent.putExtra("url", "https://get.uber.com.cn/invite/rgk2wue");
+        webViewIntent.putExtra("title", "Uber (优惠码x7kcrsc9ub)");
+        webViewIntent.putExtra("url", "https://get.uber.com.cn/invite/x7kcrsc9ub");
         startActivity(webViewIntent);
     }
 
