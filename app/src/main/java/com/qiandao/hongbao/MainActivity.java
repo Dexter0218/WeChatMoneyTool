@@ -16,8 +16,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,18 +25,13 @@ import com.qiandao.hongbao.util.ConnectivityUtil;
 import com.qiandao.hongbao.util.UpdateTask;
 import com.tencent.bugly.crashreport.CrashReport;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MainActivity extends Activity implements AccessibilityManager.AccessibilityStateChangeListener {
 
     private static String TAG = "HongbaoMainActivity";
-    private Button switchPlugin;
+    private TextView switchTextview;
+    private ImageView switchImageview;
     private AccessibilityManager accessibilityManager;
 
     @Override
@@ -49,7 +43,8 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
         accessibilityManager =
                 (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.addAccessibilityStateChangeListener(this);
-        switchPlugin = (Button) findViewById(R.id.button_accessible);
+        switchTextview = (TextView) findViewById(R.id.tv_accessible);
+        switchImageview =(ImageView)findViewById(R.id.im_accessible);
         handleMaterialStatusBar();
         updateServiceStatus();
     }
@@ -105,11 +100,13 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
         }
 
         if (serviceEnabled) {
-            switchPlugin.setText("关闭插件");
+            switchTextview.setText("关闭插件");
+            switchImageview.setImageResource(R.drawable.logo_stop);
             // Prevent screen from dimming
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         } else {
-            switchPlugin.setText("开启插件");
+            switchTextview.setText("开启插件");
+            switchImageview.setImageResource(R.drawable.logo_start);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 //        Toast.makeText(this, "版本号：" + getVersionName(), Toast.LENGTH_SHORT).show();
@@ -132,7 +129,7 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
 
     public void onButtonClicked(View view) {
         switch (view.getId()) {
-            case R.id.button_accessible:
+            case R.id.ly_accessible:
                 try {
                     Intent mAccessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                     startActivity(mAccessibleIntent);
@@ -141,7 +138,7 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
                 }
 
                 break;
-            case R.id.button_seting:
+            case R.id.ly_setting:
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 break;
@@ -152,6 +149,17 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
     public void openGithub(View view) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/geeeeeeeeek/WeChatLuckyMoney"));
         startActivity(browserIntent);
+    }
+
+    public void openUber(View view) {
+        Intent webViewIntent = new Intent(this, WebViewActivity.class);
+        webViewIntent.putExtra("title", "Uber 优惠乘车机会(优惠码rgk2wue)");
+        webViewIntent.putExtra("url", "https://get.uber.com.cn/invite/rgk2wue");
+        startActivity(webViewIntent);
+    }
+
+    public void openWeChat(View view) {
+
     }
 
     @Override
