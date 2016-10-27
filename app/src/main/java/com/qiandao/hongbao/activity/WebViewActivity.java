@@ -1,4 +1,4 @@
-package com.qiandao.hongbao;
+package com.qiandao.hongbao.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -17,21 +17,22 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.qiandao.hongbao.R;
 import com.qiandao.hongbao.util.DownloadUtil;
+import com.qiandao.hongbao.util.Helper;
 
 /**
  * Created by Dexter0218 on 2016/9/6.
  */
-public class WebViewActivity extends Activity {
+public class WebViewActivity extends BaseActivity {
     private WebView webView;
     private String webViewUrl, webViewTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        loadUI();
-
+        setContentView(R.layout.activity_webview);
+        Helper.handleMaterialStatusBar(this);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && !bundle.isEmpty()) {
             webViewTitle = bundle.getString("title");
@@ -67,20 +68,7 @@ public class WebViewActivity extends Activity {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void loadUI() {
-        setContentView(R.layout.activity_webview);
 
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-
-        Window window = this.getWindow();
-
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-
-        window.setStatusBarColor(0xffE46C62);
-    }
 
     @Override
     protected void onResume() {

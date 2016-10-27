@@ -1,4 +1,4 @@
-package com.qiandao.hongbao;
+package com.qiandao.hongbao.activity;
 
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.qiandao.hongbao.R;
+import com.qiandao.hongbao.StatusValue;
+import com.qiandao.hongbao.util.Helper;
 import com.qiandao.hongbao.util.UpdateTask;
 
 public class SettingsActivity extends PreferenceActivity {
@@ -23,21 +26,10 @@ public class SettingsActivity extends PreferenceActivity {
         setContentView(R.layout.activity_setting_layout);
         addPreferencesFromResource(R.xml.setting_preferences);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        setstatusBar();
+        Helper.handleMaterialStatusBar(this);
         updateExcludeWordsPreference();
     }
 
-    private void setstatusBar() {
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-
-        Window window = this.getWindow();
-
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-
-        window.setStatusBarColor(0xffd84e43);
-    }
 
     private void updateExcludeWordsPreference() {
         Preference exculdePreference = findPreference("pref_watch_exclude_words");

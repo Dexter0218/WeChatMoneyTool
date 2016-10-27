@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context=".WebViewActivity">
+    android:layout_height="match_parent" tools:context=".activity.WebViewActivity">
 
     <RelativeLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#E46C62"
-        tools:context=".WebViewActivity"
+        android:background="@color/backgroud_red"
+        tools:context=".activity.WebViewActivity"
         >
         <TextView android:layout_width="wrap_content" android:layout_height="54dp"
             android:id="@+id/webview_bar"

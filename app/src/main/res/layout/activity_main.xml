@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fcf8f5"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
 
     <RelativeLayout
         android:id="@+id/upperLayout"
         android:layout_width="match_parent"
         android:layout_height="320dp"
-        android:background="#ffd84e43"
+        android:background="@color/backgroud_red"
         android:elevation="8dp">
 
         <TextView
@@ -56,6 +56,7 @@
             android:layout_weight="1"
             android:background="#fff"
             android:gravity="center"
+            android:onClick="openLoginActivity"
             android:orientation="vertical"
             android:textColor="#858585">
 

@@ -1,7 +1,6 @@
-package com.qiandao.hongbao;
+package com.qiandao.hongbao.activity;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -21,13 +20,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.qiandao.hongbao.R;
+import com.qiandao.hongbao.StatusValue;
+import com.qiandao.hongbao.activity.WebViewActivity;
 import com.qiandao.hongbao.util.ConnectivityUtil;
+import com.qiandao.hongbao.util.Helper;
 import com.qiandao.hongbao.util.UpdateTask;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.List;
 
-public class MainActivity extends Activity implements AccessibilityManager.AccessibilityStateChangeListener {
+import cn.bmob.v3.Bmob;
+
+public class MainActivity extends BaseActivity implements AccessibilityManager.AccessibilityStateChangeListener {
 
     private static String TAG = "HongbaoMainActivity";
     private TextView switchTextview;
@@ -39,13 +44,14 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate");
         setContentView(R.layout.activity_main);
+        Helper.handleMaterialStatusBar(this);
         CrashReport.initCrashReport(getApplicationContext(), "900019366", false);
+        Bmob.initialize(this, "0c5edbc3c54a95e5b899ceba77679594");
         accessibilityManager =
                 (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.addAccessibilityStateChangeListener(this);
         switchTextview = (TextView) findViewById(R.id.tv_accessible);
         switchImageview =(ImageView)findViewById(R.id.im_accessible);
-        handleMaterialStatusBar();
         updateServiceStatus();
     }
 
@@ -61,14 +67,6 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
 
     }
 
-    private void handleMaterialStatusBar() {
-        // Not supported in APK level lower than 21
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-        Window window = this.getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(0xffd84e43);
-    }
 
     @Override
     protected void onResume() {
