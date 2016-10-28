@@ -160,6 +160,11 @@ public class MainActivity extends BaseActivity implements AccessibilityManager.A
 
     }
 
+    public void openLoginActivity(View view){
+        Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onAccessibilityStateChanged(boolean enabled) {
         updateServiceStatus();

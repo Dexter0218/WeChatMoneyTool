@@ -12,13 +12,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PhoneNumber：" />
+            android:text="UserName：" />
 
         <EditText
-            android:id="@+id/et_phoneNumber"
+            android:id="@+id/et_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="请输入手机号码" />
+            android:hint="请输入用户名" />
 
     </LinearLayout>
 
@@ -30,7 +30,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="password：" />
+            android:text="Password：" />
 
         <EditText
             android:id="@+id/et_password"
@@ -53,10 +53,18 @@
             android:text="登陆" />
 
         <TextView
+            android:id="@+id/tv_register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="还没有账号，点此注册"
-            android:onClick="openRegister"/>
+            />
 
     </LinearLayout>
+    <ProgressBar
+        android:visibility="invisible"
+        android:id="@+id/pg_login"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Base.Animation.AppCompat.Dialog"/>
 </LinearLayout>
