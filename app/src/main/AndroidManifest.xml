@@ -81,6 +81,10 @@
             android:name=".activity.LoginActivity"
             android:launchMode="standard"
             android:theme="@style/Base.Theme.AppCompat.Light"></activity>
+        <activity
+            android:name=".activity.RegisterActivity"
+            android:launchMode="standard"
+            android:theme="@style/Base.Theme.AppCompat.Light"></activity>
     </application>
 
 </manifest>

@@ -10,6 +10,7 @@ import com.qiandao.hongbao.bean.User;
 public interface IUserLoginView {
     String getUserName();
     String getPassword();
+    void Success();
     void showLoading();
     void hideLoading();
     void toHomeActivity(User user);

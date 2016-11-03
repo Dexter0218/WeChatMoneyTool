@@ -9,7 +9,7 @@ import cn.bmob.v3.datatype.BmobRelation;
  * Created by boobooL on 2016/4/12 0012
  * Created 邮箱 ：boobooMX@163.com
  */
-public class User extends BmobUser implements Serializable{
+public class User extends BmobUser {
 
     private String sex;
     private String nick;

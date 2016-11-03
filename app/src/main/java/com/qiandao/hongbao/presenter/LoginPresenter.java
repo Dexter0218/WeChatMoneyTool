@@ -32,11 +32,13 @@ public class LoginPresenter {
             public void OnSuccess(User user) {
                 mUserLoginView.hideLoading();
                 mUserLoginView.toHomeActivity(user);
+                mUserLoginView.Success();
             }
 
             @Override
             public void OnFailed() {
-
+                mUserLoginView.hideLoading();
+                mUserLoginView.showFailedError();
             }
         },mUserLoginView.getContext());
     }

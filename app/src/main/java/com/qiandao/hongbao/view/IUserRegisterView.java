@@ -12,7 +12,6 @@ public interface IUserRegisterView {
     void hideLoading();
     void FinishAty();
     String getUserName();
-    String getPassword();
     String getPsd();
     String getEmail();
     String getConPsd();

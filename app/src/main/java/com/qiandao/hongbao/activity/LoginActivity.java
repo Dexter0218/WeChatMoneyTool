@@ -60,6 +60,12 @@ public class LoginActivity extends BaseActivity implements IUserLoginView, View.
     }
 
     @Override
+    public void Success() {
+        Toast.makeText(LoginActivity.this
+                , "登陆成功", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
     public String getPassword() {
         if (passwordEt.getText() != null) {
             return passwordEt.getText().toString();
