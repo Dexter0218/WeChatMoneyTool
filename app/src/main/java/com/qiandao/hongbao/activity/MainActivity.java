@@ -37,6 +37,7 @@ public class MainActivity extends BaseActivity implements AccessibilityManager.A
     private static String TAG = "HongbaoMainActivity";
     private TextView switchTextview;
     private ImageView switchImageview;
+    private TextView versionTextView;
     private AccessibilityManager accessibilityManager;
 
     @Override
@@ -51,7 +52,8 @@ public class MainActivity extends BaseActivity implements AccessibilityManager.A
                 (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.addAccessibilityStateChangeListener(this);
         switchTextview = (TextView) findViewById(R.id.tv_accessible);
-        switchImageview =(ImageView)findViewById(R.id.im_accessible);
+        switchImageview = (ImageView) findViewById(R.id.im_accessible);
+        versionTextView = (TextView) findViewById(R.id.tx_version);
         updateServiceStatus();
     }
 
@@ -73,10 +75,15 @@ public class MainActivity extends BaseActivity implements AccessibilityManager.A
         super.onResume();
         Log.i(TAG, "onResume");
         updateServiceStatus();
+        updateVersion();
         initPreferenceValue();
         // Check for update when WIFI is connected or on first time.
         if (ConnectivityUtil.isWifi(this) || UpdateTask.count == 0)
             new UpdateTask(this, false).update();
+    }
+
+    private void updateVersion() {
+        versionTextView.setText("V"+getVersionName());
     }
 
     @Override
@@ -144,15 +151,10 @@ public class MainActivity extends BaseActivity implements AccessibilityManager.A
     }
 
 
-    public void openGithub(View view) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/geeeeeeeeek/WeChatLuckyMoney"));
-        startActivity(browserIntent);
-    }
-
-    public void openUber(View view) {
+    public void openWeb(View view) {
         Intent webViewIntent = new Intent(this, WebViewActivity.class);
-        webViewIntent.putExtra("title", "Uber (优惠码x7kcrsc9ub)");
-        webViewIntent.putExtra("url", "https://get.uber.com.cn/invite/x7kcrsc9ub");
+        webViewIntent.putExtra("title", "Blade A2 Plus");
+        webViewIntent.putExtra("url", "https://item.m.jd.com/product/3370431.html");
         startActivity(webViewIntent);
     }
 
@@ -160,9 +162,10 @@ public class MainActivity extends BaseActivity implements AccessibilityManager.A
 
     }
 
-    public void openLoginActivity(View view){
-        Intent intent = new Intent(MainActivity.this,LoginActivity.class);
-        startActivity(intent);
+    public void openLoginActivity(View view) {
+        Toast.makeText(this, "签到成功", Toast.LENGTH_LONG).show();
+//        Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+//        startActivity(intent);
     }
 
     @Override
