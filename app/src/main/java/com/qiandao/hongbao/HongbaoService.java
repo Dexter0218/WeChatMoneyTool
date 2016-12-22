@@ -218,7 +218,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                         Log.e(TAG, "isHongbaoOK Exception");
                     }
                 }
-
+                Log.e(TAG,"nodesToFetch.size():"+nodesToFetch.size());
                 /* 先消灭待抢红包队列中的红包 */
                 if (nodesToFetch.size() > 0) {
                     /* 从最下面的红包开始戳 */
@@ -240,6 +240,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                     return;
                 }
                 Stage.getInstance().entering(Stage.FETCHING_STAGE);
+                Log.e(TAG,"before fetchHongbao");
                 fetchHongbao(nodeInfo);
                 Stage.getInstance().entering(Stage.FETCHED_STAGE);
 
@@ -279,10 +280,13 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
 //        List<AccessibilityNodeInfo> myOwnNodes = nodeInfo.findAccessibilityNodeInfosByText("查看红包");
         /* 聊天会话窗口，遍历节点匹配“领取红包” */
         List<AccessibilityNodeInfo> fetchNodes = nodeInfo.findAccessibilityNodeInfosByText("领取红包");
+        List<AccessibilityNodeInfo> fetchhongbao = nodeInfo.findAccessibilityNodeInfosByText(NOTIFICATION_TIP);
+        Log.e(TAG,"检查红包："+fetchhongbao);
         if (fetchNodes.isEmpty()) {
             if (!flag && isPrepare) {
                 flag = checkList(nodeInfo);
             }
+            Log.e(TAG,"fetchNodes找不到'领取红包'");
             return;
         }
         /*没找到就返回*/
@@ -625,8 +629,13 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         if (nodeInfo == null) {
             return false;
         }
-        List<AccessibilityNodeInfo> nodes = nodeInfo.findAccessibilityNodeInfosByText(NOTIFICATION_TIP);
+        Log.e(TAG,"checkList");
+        Log.e(TAG," nodeInfo:"+ nodeInfo.toString());
+        List<AccessibilityNodeInfo> nodes =nodeInfo.findAccessibilityNodeInfosByText(NOTIFICATION_TIP);
         if (!nodes.isEmpty()) {
+            for(int i=0;i<nodes.size();i++){
+                Log.e(TAG,"nodes.get(i):"+nodes.get(i));
+            }
             AccessibilityNodeInfo nodeToClick = nodes.get(0);
             if (nodeToClick == null) return false;
             CharSequence contentDescription = nodeToClick.getContentDescription();
