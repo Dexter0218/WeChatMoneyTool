@@ -507,10 +507,18 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
             if (!hongbaoDetailNodes.isEmpty()) {
                 for (int i = 0; i < hongbaoDetailNodes.size(); i++) {
                     Log.e(TAG, "checkBackFromHongbaoPage_index:" + i);
-                    if (hongbaoDetailNodes.get(i).getParent() != null && hongbaoDetailNodes.get(i).getParent().getChildCount() == 3 && hongbaoDetailNodes.get(i).getParent().getChild(2).getText().equals("微信安全支付")) {
-                        Stage.getInstance().entering(Stage.DELETING_STAGE);
-                        Log.e(TAG, "卡在详情界面，回退");
-                        performMyGlobalAction(GLOBAL_ACTION_BACK);
+                    if (hongbaoDetailNodes.get(i).getParent() != null) {
+                        Log.e(TAG, "hongbaoDetailNodes.get(i)..getParent().getChildCount():" + hongbaoDetailNodes.get(i).getParent().getChildCount());
+                        if (hongbaoDetailNodes.get(i).getParent().getChildCount() == 4) {
+//                            Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(1.getText():" + hongbaoDetailNodes.get(i).getParent().getChild(1).getText());
+//                            Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(2).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(2).getText());
+//                            Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(3).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(3).getText());
+                            if (hongbaoDetailNodes.get(i).getParent().getChild(3).getText().equals("微信安全支付")) {
+                                Stage.getInstance().entering(Stage.DELETING_STAGE);
+                                Log.e(TAG, "卡在详情界面，回退");
+                                performMyGlobalAction(GLOBAL_ACTION_BACK);
+                            }
+                        }
                         return true;
                     }
                 }
