@@ -631,24 +631,46 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         }
         Log.e(TAG,"checkList");
         Log.e(TAG," nodeInfo:"+ nodeInfo.toString());
-        List<AccessibilityNodeInfo> nodes =nodeInfo.findAccessibilityNodeInfosByText(NOTIFICATION_TIP);
-        if (!nodes.isEmpty()) {
-            for(int i=0;i<nodes.size();i++){
-                Log.e(TAG,"nodes.get(i):"+nodes.get(i));
-            }
-            AccessibilityNodeInfo nodeToClick = nodes.get(0);
-            if (nodeToClick == null) return false;
-            CharSequence contentDescription = nodeToClick.getContentDescription();
-//            Log.e(TAG,"contentDescription:"+contentDescription);
-//            Log.e(TAG,"lastContentDescription:"+lastContentDescription);
-            if (contentDescription != null && nodeToClick.isClickable()/*&& !lastContentDescription.equals(contentDescription)*/) {
-                nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                Log.e(TAG, "checkList->>ACTION_CLICK");
+
+        List<AccessibilityNodeInfo> mynodes = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/adh");
+        if (!mynodes.isEmpty()) {
+            for(int i=0;i<mynodes.size();i++){
+                Log.e(TAG,"checkList->>mynodes.get(i):"+mynodes.get(i).getText());
+                if( mynodes.get(i)!=null && mynodes.get(i).getText().toString().contains(NOTIFICATION_TIP)){
+                    Log.e(TAG," checkList->>nodeName:"+nodeInfo.getClassName());
+                    Log.e(TAG," checkList->>node,getClassName:"+mynodes.get(i).getParent().getParent().getClassName());
+                    Log.e(TAG,"checkList->> node,getChild(0):"+ mynodes.get(i).getParent().getParent().getChild(0));
+                    Log.e(TAG," checkList->>node,isClickable:"+mynodes.get(i).getParent().getParent().getChild(0).isClickable());
+                    AccessibilityNodeInfo nodeToClick = mynodes.get(i).getParent().getParent().getChild(0);
+                    if (nodeToClick == null) return false;
+                    if (nodeToClick.isClickable()) {
+                        nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        Log.e(TAG, "checkList->>ACTION_CLICK");
 //                Log.e(TAG, "fetchHongbao: "+ NOTIFICATION_TIP);
 //                lastContentDescription = contentDescription.toString();
-                return true;
+                        return true;
+                    }
+                }
             }
         }
+//        List<AccessibilityNodeInfo> nodes =nodeInfo.findAccessibilityNodeInfosByText(NOTIFICATION_TIP);
+//        if (!nodes.isEmpty()) {
+//            for(int i=0;i<nodes.size();i++){
+//                Log.e(TAG,"nodes.get(i):"+nodes.get(i));
+//            }
+//            AccessibilityNodeInfo nodeToClick = nodes.get(0);
+//            if (nodeToClick == null) return false;
+//            CharSequence contentDescription = nodeToClick.getContentDescription();
+////            Log.e(TAG,"contentDescription:"+contentDescription);
+////            Log.e(TAG,"lastContentDescription:"+lastContentDescription);
+//            if (contentDescription != null && nodeToClick.isClickable()/*&& !lastContentDescription.equals(contentDescription)*/) {
+//                nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+//                Log.e(TAG, "checkList->>ACTION_CLICK");
+////                Log.e(TAG, "fetchHongbao: "+ NOTIFICATION_TIP);
+////                lastContentDescription = contentDescription.toString();
+//                return true;
+//            }
+//        }
         return false;
     }
 

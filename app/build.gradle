@@ -6,10 +6,10 @@ android {
     buildToolsVersion '23.0.1'
     defaultConfig {
         applicationId "com.qiandao.hongbao"
-        minSdkVersion 16
+        minSdkVersion 18
         targetSdkVersion 21
         versionCode 3
-        versionName '2.3'
+        versionName '2.4'
         ndk {
             //设置支持的SO库架构
             abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
