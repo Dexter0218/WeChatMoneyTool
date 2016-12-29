@@ -3,6 +3,7 @@ package com.qiandao.hongbao.util;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -61,6 +62,17 @@ public class UpdateTask extends AsyncTask<String, String, String> {
         return responseString;
     }
 
+    public String getVersion() {
+        PackageInfo pInfo = null;
+        try {
+            pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String version = pInfo.versionName + "." + pInfo.versionCode;
+        return version;
+    }
+
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
@@ -69,8 +81,7 @@ public class UpdateTask extends AsyncTask<String, String, String> {
             JSONObject release = new JSONObject(result);
 
             // Get current version
-            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            String version = pInfo.versionName + "." + pInfo.versionCode;
+            String version = getVersion();
 
             String latestVersion = release.getString("tag_name");
             boolean isPreRelease = release.getBoolean("prerelease");

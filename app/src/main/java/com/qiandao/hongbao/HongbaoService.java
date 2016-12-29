@@ -218,7 +218,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                         Log.e(TAG, "isHongbaoOK Exception");
                     }
                 }
-
+                Log.e(TAG,"nodesToFetch.size():"+nodesToFetch.size());
                 /* 先消灭待抢红包队列中的红包 */
                 if (nodesToFetch.size() > 0) {
                     /* 从最下面的红包开始戳 */
@@ -240,6 +240,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                     return;
                 }
                 Stage.getInstance().entering(Stage.FETCHING_STAGE);
+                Log.e(TAG,"before fetchHongbao");
                 fetchHongbao(nodeInfo);
                 Stage.getInstance().entering(Stage.FETCHED_STAGE);
 
@@ -279,10 +280,13 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
 //        List<AccessibilityNodeInfo> myOwnNodes = nodeInfo.findAccessibilityNodeInfosByText("查看红包");
         /* 聊天会话窗口，遍历节点匹配“领取红包” */
         List<AccessibilityNodeInfo> fetchNodes = nodeInfo.findAccessibilityNodeInfosByText("领取红包");
+        List<AccessibilityNodeInfo> fetchhongbao = nodeInfo.findAccessibilityNodeInfosByText(NOTIFICATION_TIP);
+        Log.e(TAG,"检查红包："+fetchhongbao);
         if (fetchNodes.isEmpty()) {
             if (!flag && isPrepare) {
                 flag = checkList(nodeInfo);
             }
+            Log.e(TAG,"fetchNodes找不到'领取红包'");
             return;
         }
         /*没找到就返回*/
@@ -507,10 +511,18 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
             if (!hongbaoDetailNodes.isEmpty()) {
                 for (int i = 0; i < hongbaoDetailNodes.size(); i++) {
                     Log.e(TAG, "checkBackFromHongbaoPage_index:" + i);
-                    if (hongbaoDetailNodes.get(i).getParent() != null && hongbaoDetailNodes.get(i).getParent().getChildCount() == 3 && hongbaoDetailNodes.get(i).getParent().getChild(2).getText().equals("微信安全支付")) {
-                        Stage.getInstance().entering(Stage.DELETING_STAGE);
-                        Log.e(TAG, "卡在详情界面，回退");
-                        performMyGlobalAction(GLOBAL_ACTION_BACK);
+                    if (hongbaoDetailNodes.get(i).getParent() != null) {
+                        Log.e(TAG, "hongbaoDetailNodes.get(i)..getParent().getChildCount():" + hongbaoDetailNodes.get(i).getParent().getChildCount());
+                        if (hongbaoDetailNodes.get(i).getParent().getChildCount() == 4) {
+//                            Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(1.getText():" + hongbaoDetailNodes.get(i).getParent().getChild(1).getText());
+//                            Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(2).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(2).getText());
+//                            Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(3).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(3).getText());
+                            if (hongbaoDetailNodes.get(i).getParent().getChild(3).getText().equals("微信安全支付")) {
+                                Stage.getInstance().entering(Stage.DELETING_STAGE);
+                                Log.e(TAG, "卡在详情界面，回退");
+                                performMyGlobalAction(GLOBAL_ACTION_BACK);
+                            }
+                        }
                         return true;
                     }
                 }
@@ -617,21 +629,48 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         if (nodeInfo == null) {
             return false;
         }
-        List<AccessibilityNodeInfo> nodes = nodeInfo.findAccessibilityNodeInfosByText(NOTIFICATION_TIP);
-        if (!nodes.isEmpty()) {
-            AccessibilityNodeInfo nodeToClick = nodes.get(0);
-            if (nodeToClick == null) return false;
-            CharSequence contentDescription = nodeToClick.getContentDescription();
-//            Log.e(TAG,"contentDescription:"+contentDescription);
-//            Log.e(TAG,"lastContentDescription:"+lastContentDescription);
-            if (contentDescription != null && nodeToClick.isClickable()/*&& !lastContentDescription.equals(contentDescription)*/) {
-                nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                Log.e(TAG, "checkList->>ACTION_CLICK");
+        Log.e(TAG,"checkList");
+        Log.e(TAG," nodeInfo:"+ nodeInfo.toString());
+
+        List<AccessibilityNodeInfo> mynodes = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/adh");
+        if (!mynodes.isEmpty()) {
+            for(int i=0;i<mynodes.size();i++){
+                Log.e(TAG,"checkList->>mynodes.get(i):"+mynodes.get(i).getText());
+                if( mynodes.get(i)!=null && mynodes.get(i).getText().toString().contains(NOTIFICATION_TIP)){
+                    Log.e(TAG," checkList->>nodeName:"+nodeInfo.getClassName());
+                    Log.e(TAG," checkList->>node,getClassName:"+mynodes.get(i).getParent().getParent().getClassName());
+                    Log.e(TAG,"checkList->> node,getChild(0):"+ mynodes.get(i).getParent().getParent().getChild(0));
+                    Log.e(TAG," checkList->>node,isClickable:"+mynodes.get(i).getParent().getParent().getChild(0).isClickable());
+                    AccessibilityNodeInfo nodeToClick = mynodes.get(i).getParent().getParent().getChild(0);
+                    if (nodeToClick == null) return false;
+                    if (nodeToClick.isClickable()) {
+                        nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        Log.e(TAG, "checkList->>ACTION_CLICK");
 //                Log.e(TAG, "fetchHongbao: "+ NOTIFICATION_TIP);
 //                lastContentDescription = contentDescription.toString();
-                return true;
+                        return true;
+                    }
+                }
             }
         }
+//        List<AccessibilityNodeInfo> nodes =nodeInfo.findAccessibilityNodeInfosByText(NOTIFICATION_TIP);
+//        if (!nodes.isEmpty()) {
+//            for(int i=0;i<nodes.size();i++){
+//                Log.e(TAG,"nodes.get(i):"+nodes.get(i));
+//            }
+//            AccessibilityNodeInfo nodeToClick = nodes.get(0);
+//            if (nodeToClick == null) return false;
+//            CharSequence contentDescription = nodeToClick.getContentDescription();
+////            Log.e(TAG,"contentDescription:"+contentDescription);
+////            Log.e(TAG,"lastContentDescription:"+lastContentDescription);
+//            if (contentDescription != null && nodeToClick.isClickable()/*&& !lastContentDescription.equals(contentDescription)*/) {
+//                nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+//                Log.e(TAG, "checkList->>ACTION_CLICK");
+////                Log.e(TAG, "fetchHongbao: "+ NOTIFICATION_TIP);
+////                lastContentDescription = contentDescription.toString();
+//                return true;
+//            }
+//        }
         return false;
     }
 

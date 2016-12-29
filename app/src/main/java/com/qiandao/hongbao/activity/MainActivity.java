@@ -1,7 +1,6 @@
-package com.qiandao.hongbao;
+package com.qiandao.hongbao.activity;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -16,28 +15,29 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.qiandao.hongbao.R;
+import com.qiandao.hongbao.StatusValue;
+import com.qiandao.hongbao.activity.WebViewActivity;
 import com.qiandao.hongbao.util.ConnectivityUtil;
+import com.qiandao.hongbao.util.Helper;
 import com.qiandao.hongbao.util.UpdateTask;
 import com.tencent.bugly.crashreport.CrashReport;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class MainActivity extends Activity implements AccessibilityManager.AccessibilityStateChangeListener {
+import cn.bmob.v3.Bmob;
+
+public class MainActivity extends BaseActivity implements AccessibilityManager.AccessibilityStateChangeListener {
 
     private static String TAG = "HongbaoMainActivity";
-    private Button switchPlugin;
+    private TextView switchTextview;
+    private ImageView switchImageview;
+    private TextView versionTextView;
     private AccessibilityManager accessibilityManager;
 
     @Override
@@ -45,12 +45,15 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate");
         setContentView(R.layout.activity_main);
+        Helper.handleMaterialStatusBar(this);
         CrashReport.initCrashReport(getApplicationContext(), "900019366", false);
+        Bmob.initialize(this, "0c5edbc3c54a95e5b899ceba77679594");
         accessibilityManager =
                 (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.addAccessibilityStateChangeListener(this);
-        switchPlugin = (Button) findViewById(R.id.button_accessible);
-        handleMaterialStatusBar();
+        switchTextview = (TextView) findViewById(R.id.tv_accessible);
+        switchImageview = (ImageView) findViewById(R.id.im_accessible);
+        versionTextView = (TextView) findViewById(R.id.tx_version);
         updateServiceStatus();
     }
 
@@ -66,24 +69,21 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
 
     }
 
-    private void handleMaterialStatusBar() {
-        // Not supported in APK level lower than 21
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-        Window window = this.getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(0xffd84e43);
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "onResume");
         updateServiceStatus();
+        updateVersion();
         initPreferenceValue();
         // Check for update when WIFI is connected or on first time.
         if (ConnectivityUtil.isWifi(this) || UpdateTask.count == 0)
             new UpdateTask(this, false).update();
+    }
+
+    private void updateVersion() {
+        versionTextView.setText("V"+getVersionName());
     }
 
     @Override
@@ -105,11 +105,13 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
         }
 
         if (serviceEnabled) {
-            switchPlugin.setText("关闭插件");
+            switchTextview.setText("关闭插件");
+            switchImageview.setImageResource(R.drawable.logo_stop);
             // Prevent screen from dimming
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         } else {
-            switchPlugin.setText("开启插件");
+            switchTextview.setText("开启插件");
+            switchImageview.setImageResource(R.drawable.logo_start);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 //        Toast.makeText(this, "版本号：" + getVersionName(), Toast.LENGTH_SHORT).show();
@@ -132,7 +134,7 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
 
     public void onButtonClicked(View view) {
         switch (view.getId()) {
-            case R.id.button_accessible:
+            case R.id.ly_accessible:
                 try {
                     Intent mAccessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                     startActivity(mAccessibleIntent);
@@ -141,7 +143,7 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
                 }
 
                 break;
-            case R.id.button_seting:
+            case R.id.ly_setting:
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 break;
@@ -149,9 +151,21 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
     }
 
 
-    public void openGithub(View view) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/geeeeeeeeek/WeChatLuckyMoney"));
-        startActivity(browserIntent);
+    public void openWeb(View view) {
+        Intent webViewIntent = new Intent(this, WebViewActivity.class);
+        webViewIntent.putExtra("title", "Blade A2 Plus");
+        webViewIntent.putExtra("url", "https://item.m.jd.com/product/3370431.html");
+        startActivity(webViewIntent);
+    }
+
+    public void openWeChat(View view) {
+
+    }
+
+    public void openLoginActivity(View view) {
+        Toast.makeText(this, "签到成功", Toast.LENGTH_LONG).show();
+//        Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+//        startActivity(intent);
     }
 
     @Override
