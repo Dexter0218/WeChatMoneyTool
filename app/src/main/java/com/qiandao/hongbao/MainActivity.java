@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 
 import com.qiandao.hongbao.util.ConnectivityUtil;
+import com.qiandao.hongbao.util.HongbaoLogger;
 import com.qiandao.hongbao.util.UpdateTask;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -52,6 +53,8 @@ public class MainActivity extends Activity implements AccessibilityManager.Acces
         switchPlugin = (Button) findViewById(R.id.button_accessible);
         handleMaterialStatusBar();
         updateServiceStatus();
+
+
     }
 
     private void initPreferenceValue() {
