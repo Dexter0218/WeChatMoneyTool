@@ -176,7 +176,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                         }
                     } else {
                         Stage.getInstance().entering(Stage.DELETING_STAGE);
-//                        performMyGlobalAction(GLOBAL_ACTION_BACK);
+                        performMyGlobalAction(GLOBAL_ACTION_BACK);
                     }
                 } else {
                     Log.e(TAG, "reOpen");
@@ -327,6 +327,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         failureNoticeNodes.addAll(nodeInfo.findAccessibilityNodeInfosByText("过期"));
         failureNoticeNodes.addAll(nodeInfo.findAccessibilityNodeInfosByText("失效"));
         if (!failureNoticeNodes.isEmpty()) {
+            Log.d(TAG,"点了拆，等待返回。。。");
             return 0;
         }
 
