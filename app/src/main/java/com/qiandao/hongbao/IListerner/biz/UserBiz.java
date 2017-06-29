@@ -7,8 +7,11 @@ import com.qiandao.hongbao.IListerner.IUserBiz;
 import com.qiandao.hongbao.IListerner.OnLoginListener;
 import com.qiandao.hongbao.IListerner.OnRegisterListener;
 import com.qiandao.hongbao.bean.User;
+import com.qiandao.hongbao.util.Validator;
 
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.SaveListener;
 
 /**
@@ -20,18 +23,32 @@ public class UserBiz implements IUserBiz {
     @Override
     public void login(String userName, String password, final OnLoginListener loginListener, Context context) {
         final User user = new User();
-        user.setUsername(userName);
-        user.setPassword(password);
-        user.login(new SaveListener<User>() {
-            @Override
-            public void done(User user, BmobException e) {
-                if (e == null) {
-                    loginListener.OnSuccess(user);
-                } else {
-                    loginListener.OnFailed();
+        if(Validator.isEmail(userName)||Validator.isMobile(userName)){
+            Log.d(TAG,"useAccount to login");
+            BmobUser.loginByAccount(userName, password, new LogInListener<User>() {
+                @Override
+                public void done(User user, BmobException e) {
+                    if(user!=null){
+                        Log.i("smile","用户登陆成功");
+                        loginListener.OnSuccess(user);
+                    }
                 }
-            }
-        });
+            });
+        }else{
+            user.setUsername(userName);
+            Log.d(TAG,"useUsername to login");
+            user.setPassword(password);
+            user.login(new SaveListener<User>() {
+                @Override
+                public void done(User user, BmobException e) {
+                    if (e == null) {
+                        loginListener.OnSuccess(user);
+                    } else {
+                        loginListener.OnFailed();
+                    }
+                }
+            });
+        }
     }
 
     @Override

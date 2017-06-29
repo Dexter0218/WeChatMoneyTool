@@ -27,7 +27,7 @@ public class LoginPresenter {
 
     public void login(){
         mUserLoginView.showLoading();
-        mIUserBiz.login(mUserLoginView.getUserName(), mUserLoginView.getPassword(), new OnLoginListener() {
+        mIUserBiz.login(mUserLoginView.getUserName(), mUserLoginView.getPassword(), new  OnLoginListener() {
             @Override
             public void OnSuccess(User user) {
                 mUserLoginView.hideLoading();

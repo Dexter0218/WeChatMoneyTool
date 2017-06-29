@@ -5,24 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.qiandao.hongbao.R;
 import com.qiandao.hongbao.StatusValue;
-import com.qiandao.hongbao.activity.WebViewActivity;
 import com.qiandao.hongbao.util.ConnectivityUtil;
 import com.qiandao.hongbao.util.Helper;
 import com.qiandao.hongbao.util.UpdateTask;
@@ -163,9 +158,9 @@ public class MainActivity extends BaseActivity implements AccessibilityManager.A
     }
 
     public void openLoginActivity(View view) {
-        Toast.makeText(this, "签到成功", Toast.LENGTH_LONG).show();
-//        Intent intent = new Intent(MainActivity.this,LoginActivity.class);
-//        startActivity(intent);
+//        Toast.makeText(this, "签到成功", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+        startActivity(intent);
     }
 
     @Override
