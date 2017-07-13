@@ -158,9 +158,9 @@ public class MainActivity extends BaseActivity implements AccessibilityManager.A
     }
 
     public void openLoginActivity(View view) {
-//        Toast.makeText(this, "签到成功", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(MainActivity.this,LoginActivity.class);
-        startActivity(intent);
+        Toast.makeText(this, "签到成功", Toast.LENGTH_LONG).show();
+//        Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+//        startActivity(intent);
     }
 
     @Override

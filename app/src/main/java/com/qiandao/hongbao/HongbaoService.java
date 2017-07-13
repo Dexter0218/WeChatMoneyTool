@@ -17,9 +17,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
 
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -414,9 +412,10 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
             AccessibilityNodeInfo deleteNode = successNoticeNodes.get(successNoticeNodes.size() - 1);
             Log.e(TAG, "deleteHongbao.size():" + successNoticeNodes.size());
             if (deleteNode.getParent() != null && deleteNode.getText() != null && deleteNode.getText().toString().equals("删除")) {
-                if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.LinearLayout")) {
+                Log.e(TAG, "找删除文字");
+                if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.ListView")) {
                     Log.e(TAG, "點擊刪除");
-                    deleteNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    deleteNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     flag = false;
                     isHongbaoAppOK = false;
                     if (isPrepare && nodesToFetch.size() == 0) {
