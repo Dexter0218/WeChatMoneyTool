@@ -143,7 +143,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
             android:background="#ffffff"
-            android:onClick="openWeb"
+            android:onClick="copyCode"
             android:orientation="horizontal">
 
             <ImageView
@@ -154,7 +154,7 @@
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="10dp"
-                android:src="@drawable/logo_phone" />
+                android:src="@mipmap/logo_hongbao" />
 
             <LinearLayout
                 android:id="@+id/layout_uber_text"
@@ -168,7 +168,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
-                    android:text="Blade A2 Plus 大电池 大内存 放胆用"
+                    android:text="每天可领大红包"
                     android:textColor="#858585" />
 
                 <TextView
@@ -176,7 +176,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
-                    android:text="点此，立即京东抢购"
+                    android:text="点此，立即抢"
                     android:textColor="#dfaa6a" />
             </LinearLayout>
         </LinearLayout>

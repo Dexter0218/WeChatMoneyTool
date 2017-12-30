@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
-apply plugin: 'android-apt'
+//apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '23.0.1'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.qiandao.hongbao"
         minSdkVersion 18
-        targetSdkVersion 21
+        targetSdkVersion 25
         versionCode 3
         versionName '2.4'
         ndk {
@@ -52,8 +52,5 @@ dependencies {
     //以下SDK开发者请根据需要自行选择
     //bmob-sdk：Bmob的android sdk包，包含了Bmob的数据存储、文件等服务，以下是最新的bmob-sdk:
     //3.5.0：请务必查看下面注释[1]
-    compile 'cn.bmob.android:bmob-sdk:3.5.0'
-    compile 'com.jakewharton:butterknife:8.4.0'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'com.tencent.bugly:crashreport:2.3.1'
 }

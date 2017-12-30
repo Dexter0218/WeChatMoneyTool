@@ -1,6 +1,8 @@
 package com.qiandao.hongbao.activity;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -25,8 +27,6 @@ import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.List;
 
-import cn.bmob.v3.Bmob;
-
 public class MainActivity extends BaseActivity implements AccessibilityManager.AccessibilityStateChangeListener {
 
     private static String TAG = "HongbaoMainActivity";
@@ -42,7 +42,6 @@ public class MainActivity extends BaseActivity implements AccessibilityManager.A
         setContentView(R.layout.activity_main);
         Helper.handleMaterialStatusBar(this);
         CrashReport.initCrashReport(getApplicationContext(), "900019366", false);
-        Bmob.initialize(this, "0c5edbc3c54a95e5b899ceba77679594");
         accessibilityManager =
                 (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.addAccessibilityStateChangeListener(this);
@@ -144,6 +143,21 @@ public class MainActivity extends BaseActivity implements AccessibilityManager.A
                 break;
         }
     }
+
+    public void copyCode(View view){
+        // 从API11开始android推荐使用android.content.ClipboardManager
+        // 为了兼容低版本我们这里使用旧版的android.text.ClipboardManager，虽然提示deprecated，但不影响使用。
+        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        // 将文本内容放到系统剪贴板里。
+        cm.setText("人人可领，领完就能用。祝大家领取的红包金额大大大！#吱口令#长按复制此消息，打开支付宝就能领取！fbQfV839B2 ");
+//        Toast.makeText(this, "复制成功，打开支付宝就可以领。", Toast.LENGTH_LONG).show();
+
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);//重点是加这个
+        intent.setComponent(new ComponentName("com.eg.android.AlipayGphone","com.eg.android.AlipayGphone.AlipayLogin"));
+        startActivity(intent);
+    }
+
 
 
     public void openWeb(View view) {
