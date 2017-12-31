@@ -151,11 +151,15 @@ public class MainActivity extends BaseActivity implements AccessibilityManager.A
         // 将文本内容放到系统剪贴板里。
         cm.setText("人人可领，领完就能用。祝大家领取的红包金额大大大！#吱口令#长按复制此消息，打开支付宝就能领取！fbQfV839B2 ");
 //        Toast.makeText(this, "复制成功，打开支付宝就可以领。", Toast.LENGTH_LONG).show();
+        try{
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);//重点是加这个
+            intent.setComponent(new ComponentName("com.eg.android.AlipayGphone","com.eg.android.AlipayGphone.AlipayLogin"));
+            startActivity(intent);
+        }catch (Exception e){
+            Log.w(TAG,"Activity not found");
+        }
 
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);//重点是加这个
-        intent.setComponent(new ComponentName("com.eg.android.AlipayGphone","com.eg.android.AlipayGphone.AlipayLogin"));
-        startActivity(intent);
     }
 
 
