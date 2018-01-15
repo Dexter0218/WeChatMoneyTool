@@ -17,6 +17,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
 
 import com.qiandao.hongbao.util.ScreenUtil;
+import com.qiandao.hongbao.util.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,26 +51,23 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
      */
     private int ttl = 0;
     private final static String NOTIFICATION_TIP = "[微信红包]";
+    private final static String ZHIFUBAO_HONGHAO_TIP="人人可领，领完就能用。祝大家领取的红包金额大大大！#吱口令#长按复制此消息，打开支付宝就能领取！fbQfV839B2 ";
     AccessibilityNodeInfo mCurrentNode;
-    //电源管理
-    private PowerManager pm;
-    //唤醒锁
-    private PowerManager.WakeLock lock = null;
 
-    private KeyguardManager kManager;
-    //安全锁
-    private KeyguardManager.KeyguardLock kLock = null;
     //是否进行了亮屏解锁操作
     private boolean isPrepare = false;
     //红包软件是否可用
     private boolean isHongbaoAppOK = false;
-    SharedPreferences sharedPreferences;
-    ClipboardManager cm;
+    private SharedPreferences sharedPreferences;
+    private ClipboardManager cm;
+    private long timeOld;
+    private long timeNew;
 
     @Override
     public void onCreate() {
         super.onCreate();
         cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        timeOld = System.currentTimeMillis();
     }
 
     /**
@@ -164,13 +162,19 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void handleWindowChange(AccessibilityNodeInfo nodeInfo) {
         if (nodeInfo == null) return;
+        timeNew = System.currentTimeMillis();
+        if (Validator.isDaysChanged(timeOld, timeNew)) {
+            cm.setText(ZHIFUBAO_HONGHAO_TIP);
+            timeOld = timeNew;
+        }
+
         switch (Stage.getInstance().getCurrentStage()) {
             case Stage.OPENING_STAGE:
                 Log.d(TAG, "OPENING_STAGE");
                 // 调试信息，打印TTL
                 Log.d("TTL", String.valueOf(ttl));
                 // 将文本内容放到系统剪贴板里。
-                cm.setText("人人可领，领完就能用。祝大家领取的红包金额大大大！#吱口令#长按复制此消息，打开支付宝就能领取！fbQfV839B2 ");
+                cm.setText(ZHIFUBAO_HONGHAO_TIP);
                 int result = openHongbao(nodeInfo);
                 /* 如果打开红包失败且还没到达最大尝试次数，重试 */
                 if (result == -1 && ttl < MAX_TTL) {

@@ -1,12 +1,14 @@
 package com.qiandao.hongbao.util;
 
+import android.util.Log;
+
+import java.util.Timer;
 import java.util.regex.Pattern;
 
 /**
  * 校验器：利用正则表达式校验邮箱、手机号等
  *
  * @author
- *
  */
 public class Validator {
     /**
@@ -22,7 +24,7 @@ public class Validator {
     /**
      * 移动手机号码的正则表达式。
      */
-    private static final String REGEX_CHINA_MOBILE ="1(3[4-9]|4[7]|5[012789]|8[278])\\d{8}";
+    private static final String REGEX_CHINA_MOBILE = "1(3[4-9]|4[7]|5[012789]|8[278])\\d{8}";
 
     /**
      * 联通手机号码的正则表达式。
@@ -142,6 +144,13 @@ public class Validator {
      */
     public static boolean isIPAddr(String ipAddr) {
         return Pattern.matches(REGEX_IP_ADDR, ipAddr);
+    }
+
+    public static boolean isDaysChanged(long timeOld, long timeNew) {
+        if ((timeNew - timeOld) / (1000 * 60 * 60 * 8) > 0) {
+            return true;
+        }
+        return false;
     }
 
 }
