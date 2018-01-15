@@ -1,19 +1,16 @@
 package com.qiandao.hongbao.activity;
 
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.util.Log;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.qiandao.hongbao.R;
 import com.qiandao.hongbao.StatusValue;
-import com.qiandao.hongbao.util.Helper;
+import com.qiandao.hongbao.util.VersionHelper;
 import com.qiandao.hongbao.util.UpdateTask;
 
 public class SettingsActivity extends PreferenceActivity {
@@ -26,7 +23,7 @@ public class SettingsActivity extends PreferenceActivity {
         setContentView(R.layout.activity_setting_layout);
         addPreferencesFromResource(R.xml.setting_preferences);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Helper.handleMaterialStatusBar(this);
+        VersionHelper.handleMaterialStatusBar(this);
         updateExcludeWordsPreference();
     }
 

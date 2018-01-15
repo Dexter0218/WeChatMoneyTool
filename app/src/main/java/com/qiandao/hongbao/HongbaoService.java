@@ -7,16 +7,16 @@ import android.app.Notification;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Parcelable;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Display;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
+
+import com.qiandao.hongbao.util.ScreenUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +65,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     private boolean isHongbaoAppOK = false;
     SharedPreferences sharedPreferences;
     ClipboardManager cm;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -81,7 +82,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        Log.d(TAG,"event:"+event.getEventType());
+        Log.d(TAG, "event:" + event.getEventType());
         if (event.getEventType() == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
             String tip = event.getText().toString();
             Log.e(TAG, "onAccessibilityEvent: tip" + tip);
@@ -89,18 +90,18 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 return;
             }
 
-            if (!isScreenOn(this)) {
+            if (!ScreenUtil.isScreenOn(this)) {
                 if (!StatusValue.getInstance().isSupportBlackSreen()) return;
-                lightScreen();
+                ScreenUtil.lightScreen(this);
                 isPrepare = true;
             } else {
                 isPrepare = false;
             }
-            if (isLockOn()) {
-                unLock();
+            if (ScreenUtil.isLockOn(this)) {
+                ScreenUtil.unLock(this);
                 isPrepare = true;
             } else {
-                isPrepare = isPrepare | false;
+                isPrepare = isPrepare || false;
             }
             Parcelable parcelable = event.getParcelableData();
             if (parcelable instanceof Notification) {
@@ -122,7 +123,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
             return;
         }
 
-        if (Stage.getInstance().mutex){
+        if (Stage.getInstance().mutex) {
             return;
         }
         Stage.getInstance().mutex = true;
@@ -168,7 +169,8 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 Log.d(TAG, "OPENING_STAGE");
                 // 调试信息，打印TTL
                 Log.d("TTL", String.valueOf(ttl));
-
+                // 将文本内容放到系统剪贴板里。
+                cm.setText("人人可领，领完就能用。祝大家领取的红包金额大大大！#吱口令#长按复制此消息，打开支付宝就能领取！fbQfV839B2 ");
                 int result = openHongbao(nodeInfo);
                 /* 如果打开红包失败且还没到达最大尝试次数，重试 */
                 if (result == -1 && ttl < MAX_TTL) {
@@ -183,7 +185,11 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                             Stage.getInstance().entering(Stage.FETCHED_STAGE);
                         }
                     } else {
-                        Stage.getInstance().entering(Stage.DELETING_STAGE);
+                        if (StatusValue.getInstance().isSupportDelete()) {
+                            Stage.getInstance().entering(Stage.DELETING_STAGE);
+                        } else {
+                            Stage.getInstance().entering(Stage.FETCHED_STAGE);
+                        }
                         performMyGlobalAction(GLOBAL_ACTION_BACK);
                     }
                 } else {
@@ -210,12 +216,12 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                         Stage.getInstance().entering(Stage.FETCHED_STAGE);
                     }
                 } else {
-                    Stage.getInstance().entering(Stage.DELETING_STAGE);
-//                        performMyGlobalAction(GLOBAL_ACTION_BACK);
+                    if (StatusValue.getInstance().isSupportDelete()) {
+                        Stage.getInstance().entering(Stage.DELETING_STAGE);
+                    } else {
+                        Stage.getInstance().entering(Stage.FETCHED_STAGE);
+                    }
                 }
-//                Stage.getInstance().entering(Stage.FETCHED_STAGE);
-//                Log.e(TAG, "!@!!!!!!!!!!!!!!!!!!!!!!回退");
-//                performMyGlobalAction(GLOBAL_ACTION_BACK);
                 break;
             case Stage.FETCHED_STAGE:
                 Log.d(TAG, "FETCHED_STAGE");
@@ -352,6 +358,9 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
             final AccessibilityNodeInfo openNode = successNoticeNodes;
             Stage.getInstance().entering(Stage.OPENED_STAGE);
             int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 500;
+
+
+
             new android.os.Handler().postDelayed(
                     new Runnable() {
                         public void run() {
@@ -430,29 +439,37 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
             Log.e(TAG, "deleteHongbao.size():" + successNoticeNodes.size());
             if (deleteNode.getParent() != null && deleteNode.getText() != null && deleteNode.getText().toString().equals("删除")) {
                 Log.e(TAG, "找删除文字");
-                if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.ListView")) {
-                    Log.e(TAG, "點擊刪除");
-                    deleteNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-
-
-                    // 将文本内容放到系统剪贴板里。
-                    cm.setText("人人可领，领完就能用。祝大家领取的红包金额大大大！#吱口令#长按复制此消息，打开支付宝就能领取！fbQfV839B2 ");
-
-                    flag = false;
-                    isHongbaoAppOK = false;
-                    if (isPrepare && nodesToFetch.size() == 0) {
-                        if (performGlobalAction(GLOBAL_ACTION_RECENTS)) {
-                            clean();
-                        }
-                        isPrepare = false;
+                if (StatusValue.getInstance().isSupportDelete()) {
+                    if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.LinearLayout")) {
+                        Log.e(TAG, "點擊刪除1");
+                        deleteNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        deleteAndClean(deleteNode);
+                        return true;
                     }
-                    return true;
+                } else {
+                    if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.ListView")) {
+                        Log.e(TAG, "點擊刪除2");
+                        deleteNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        deleteAndClean(deleteNode);
+                        return true;
+                    }
+
                 }
             }
         }
         return false;
     }
 
+    private void deleteAndClean(AccessibilityNodeInfo deleteNode) {
+        flag = false;
+        isHongbaoAppOK = false;
+        if (isPrepare && nodesToFetch.size() == 0) {
+            if (performGlobalAction(GLOBAL_ACTION_RECENTS)) {
+                ScreenUtil.clean();
+            }
+            isPrepare = false;
+        }
+    }
 
 
     /**
@@ -540,7 +557,11 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
 //                        Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(1.getText():" + hongbaoDetailNodes.get(i).getParent().getChild(1).getText());
 //                        Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(2).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(2).getText());
                         if (hongbaoDetailNodes.get(i).getParent().getChildCount() == 3 && hongbaoDetailNodes.get(i).getParent().getChild(2).getText().toString().equals("红包详情")) {
-                            Stage.getInstance().entering(Stage.DELETING_STAGE);
+                            if (StatusValue.getInstance().isSupportDelete()) {
+                                Stage.getInstance().entering(Stage.DELETING_STAGE);
+                            } else {
+                                Stage.getInstance().entering(Stage.FETCHED_STAGE);
+                            }
                             Log.e(TAG, "卡在详情界面，回退1");
                             performMyGlobalAction(GLOBAL_ACTION_BACK);
                             return true;
@@ -550,7 +571,11 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
 //                            Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(2).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(2).getText());
 //                            Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(3).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(3).getText());
                             if (hongbaoDetailNodes.get(i).getParent().getChild(3).getText().equals("红包记录")) {
-                                Stage.getInstance().entering(Stage.DELETING_STAGE);
+                                if (StatusValue.getInstance().isSupportDelete()) {
+                                    Stage.getInstance().entering(Stage.DELETING_STAGE);
+                                } else {
+                                    Stage.getInstance().entering(Stage.FETCHED_STAGE);
+                                }
                                 Log.e(TAG, "卡在详情界面，回退2");
                                 performMyGlobalAction(GLOBAL_ACTION_BACK);
                             }
@@ -569,87 +594,6 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         performGlobalAction(action);
     }
 
-
-    /**
-     * 点亮屏幕
-     */
-    private void lightScreen() {
-        if (pm == null) {
-            pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        }
-        Log.e(TAG, "lightScreen()");
-        lock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, TAG);
-        lock.acquire();
-    }
-
-    /**
-     * 解锁
-     */
-    private void unLock() {
-        if (kManager == null) {
-            kManager = ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE));
-        }
-        Log.e(TAG, "unLock()");
-        kLock = kManager.newKeyguardLock(TAG);
-        kLock.disableKeyguard();
-    }
-
-    /**
-     * 清理环境
-     */
-    private void clean() {
-
-        Log.e(TAG, "clean()");
-        if (kLock != null) {
-            kLock.reenableKeyguard();
-            kLock = null;
-        }
-        if (lock != null) {
-            lock.release();
-            lock = null;
-        }
-    }
-
-    /**
-     * 判断是否加了安全锁
-     *
-     * @return
-     */
-    private boolean isLockOn() {
-        KeyguardManager kM = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-        if (kM != null) {
-            if (kM.isKeyguardLocked()) { // && kM.isKeyguardSecure()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * 判断屏幕是否亮
-     *
-     * @param context the context
-     * @return true when (at least one) screen is on
-     */
-    public boolean isScreenOn(Context context) {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-            DisplayManager dm = (DisplayManager) context
-                    .getSystemService(Context.DISPLAY_SERVICE);
-            boolean screenOn = false;
-            for (Display display : dm.getDisplays()) {
-                if (display.getState() != Display.STATE_OFF) {
-                    screenOn = true;
-                }
-            }
-            return screenOn;
-        } else {
-            PowerManager pm = (PowerManager) context
-                    .getSystemService(Context.POWER_SERVICE);
-            // noinspection deprecation
-            return pm.isScreenOn();
-        }
-    }
 
     /**
      * 检查聊天列表界面是否有“【微信红包】”，有就点进去

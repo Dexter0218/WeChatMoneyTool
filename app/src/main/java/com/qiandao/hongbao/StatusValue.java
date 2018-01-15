@@ -13,6 +13,10 @@ public class StatusValue {
     private static boolean isSupportBlackSreen = true;
     private static String exculdeWords = "";
 
+
+
+    private static boolean isSupportDelete = true;
+
     private StatusValue() {
     }
 
@@ -57,5 +61,11 @@ public class StatusValue {
     public static void setIsSupportAutoRob(boolean isSupportAutoRob) {
         StatusValue.isSupportAutoRob = isSupportAutoRob;
     }
+    public static boolean isSupportDelete() {
+        return isSupportDelete;
+    }
 
+    public static void setIsSupportDelete(boolean isSupportDelete) {
+        StatusValue.isSupportDelete = isSupportDelete;
+    }
 }

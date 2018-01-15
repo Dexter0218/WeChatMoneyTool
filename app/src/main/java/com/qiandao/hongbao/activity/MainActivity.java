@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.qiandao.hongbao.R;
 import com.qiandao.hongbao.StatusValue;
 import com.qiandao.hongbao.util.ConnectivityUtil;
-import com.qiandao.hongbao.util.Helper;
+import com.qiandao.hongbao.util.VersionHelper;
 import com.qiandao.hongbao.util.UpdateTask;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -40,7 +40,21 @@ public class MainActivity extends BaseActivity implements AccessibilityManager.A
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate");
         setContentView(R.layout.activity_main);
-        Helper.handleMaterialStatusBar(this);
+        VersionHelper.handleMaterialStatusBar(this);
+        try {
+            String weChatVersion =VersionHelper.getVersionName(this,VersionHelper.WechatPackageName);
+            Log.d(TAG,"WeChatVersion:"+weChatVersion);
+            if(weChatVersion.compareToIgnoreCase("6.6.0")>=0){
+                Log.d(TAG,"大于6.6.0");
+                StatusValue.getInstance().setIsSupportDelete(false);
+            }else {
+                Log.d(TAG,"小于6.6.0");
+                StatusValue.getInstance().setIsSupportDelete(true);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         CrashReport.initCrashReport(getApplicationContext(), "900019366", false);
         accessibilityManager =
                 (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);

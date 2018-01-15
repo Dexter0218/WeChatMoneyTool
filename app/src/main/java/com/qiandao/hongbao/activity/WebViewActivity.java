@@ -1,15 +1,10 @@
 package com.qiandao.hongbao.activity;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -19,7 +14,7 @@ import android.widget.Toast;
 
 import com.qiandao.hongbao.R;
 import com.qiandao.hongbao.util.DownloadUtil;
-import com.qiandao.hongbao.util.Helper;
+import com.qiandao.hongbao.util.VersionHelper;
 
 /**
  * Created by Dexter0218 on 2016/9/6.
@@ -32,7 +27,7 @@ public class WebViewActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webview);
-        Helper.handleMaterialStatusBar(this);
+        VersionHelper.handleMaterialStatusBar(this);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && !bundle.isEmpty()) {
             webViewTitle = bundle.getString("title");
