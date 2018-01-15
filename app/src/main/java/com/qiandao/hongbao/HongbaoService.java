@@ -225,6 +225,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                     } else {
                         Stage.getInstance().entering(Stage.FETCHED_STAGE);
                     }
+                    performMyGlobalAction(GLOBAL_ACTION_BACK);
                 }
                 break;
             case Stage.FETCHED_STAGE:
