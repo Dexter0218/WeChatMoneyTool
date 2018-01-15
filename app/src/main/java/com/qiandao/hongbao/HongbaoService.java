@@ -85,7 +85,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         Log.d(TAG, "event:" + event.getEventType());
         if (event.getEventType() == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
             String tip = event.getText().toString();
-            Log.e(TAG, "onAccessibilityEvent: tip" + tip);
+            Log.i(TAG, "onAccessibilityEvent: tip" + tip);
             if (!tip.contains(NOTIFICATION_TIP) || isPersonalTailor(tip)) {
                 return;
             }
@@ -108,16 +108,16 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 Notification notification = (Notification) parcelable;
                 try {
                     if (Stage.getInstance().getCurrentStage() == Stage.FETCHED_STAGE) {
-                        Log.e(TAG, "Stage.FETCHED_STAGE_>send()");
+                        Log.i(TAG, "Stage.FETCHED_STAGE_>send()");
                         notification.contentIntent.send();
                     } else if (Stage.getInstance().getCurrentStage() != Stage.OPENING_STAGE) {
                         Stage.getInstance().entering(Stage.FETCHED_STAGE);
-                        Log.e(TAG, "呵呵" + Stage.getInstance().getCurrentStage());
+                        Log.i(TAG, "呵呵" + Stage.getInstance().getCurrentStage());
                         notification.contentIntent.send();
                     }
 
                 } catch (Exception e) {
-                    Log.e(TAG, "PendingIntent.CanceledException", e);
+                    Log.w(TAG, "PendingIntent.CanceledException", e);
                 }
             }
             return;
@@ -176,11 +176,11 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 if (result == -1 && ttl < MAX_TTL) {
                     return;
                 } else if (result == 0) {
-                    Log.e(TAG, "opened，to deleting");
+                    Log.i(TAG, "opened，to deleting");
                     //不自动拆时。如果在详情界面，就退出，下一步进入DELETING_STAGE，进行删除；
                     // 如果不在，则进行手动拆，下一步进入FETCHED_STAGE状态，。
                     if (!StatusValue.getInstance().isSupportAutoRob()) {
-                        Log.e(TAG, "不拆2");
+                        Log.i(TAG, "不拆2");
                         if (!checkBackFromHongbaoPage(nodeInfo)) {
                             Stage.getInstance().entering(Stage.FETCHED_STAGE);
                         }
@@ -193,7 +193,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                         performMyGlobalAction(GLOBAL_ACTION_BACK);
                     }
                 } else {
-                    Log.e(TAG, "reOpen");
+                    Log.i(TAG, "reOpen");
                     checkList(nodeInfo);
                     Stage.getInstance().entering(Stage.FETCHED_STAGE);
                 }
@@ -211,7 +211,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 isHongbaoAppOK = false;
 
                 if (!StatusValue.getInstance().isSupportAutoRob()) {
-                    Log.e(TAG, "不拆4");
+                    Log.i(TAG, "不拆4");
                     if (!checkBackFromHongbaoPage(nodeInfo)) {
                         Stage.getInstance().entering(Stage.FETCHED_STAGE);
                     }
@@ -229,10 +229,10 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                     try {
                         isHongbaoAppOK = isHongbaoOK(nodeInfo);
                     } catch (Exception e) {
-                        Log.e(TAG, "isHongbaoOK Exception");
+                        Log.w(TAG, "isHongbaoOK Exception");
                     }
                 }
-                Log.e(TAG, "nodesToFetch.size():" + nodesToFetch.size());
+                Log.d(TAG, "nodesToFetch.size():" + nodesToFetch.size());
                 /* 先消灭待抢红包队列中的红包 */
                 if (nodesToFetch.size() > 0) {
                     /* 从最下面的红包开始戳 */
@@ -254,7 +254,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                     return;
                 }
                 Stage.getInstance().entering(Stage.FETCHING_STAGE);
-                Log.e(TAG, "before fetchHongbao");
+                Log.i(TAG, "before fetchHongbao");
                 fetchHongbao(nodeInfo);
                 Stage.getInstance().entering(Stage.FETCHED_STAGE);
 
@@ -264,7 +264,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 checkBackFromHongbaoPage(nodeInfo);
                 if (mCurrentNode != null && mCurrentNode.getParent() != null) {
                     mCurrentNode.getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
-                    Log.e(TAG, "正在删除");
+                    Log.i(TAG, "正在删除");
                     Stage.getInstance().entering(Stage.DELETED_STAGE);
                 }
                 break;
@@ -295,12 +295,12 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         /* 聊天会话窗口，遍历节点匹配“领取红包” */
         List<AccessibilityNodeInfo> fetchNodes = nodeInfo.findAccessibilityNodeInfosByText("领取红包");
         List<AccessibilityNodeInfo> fetchhongbao = nodeInfo.findAccessibilityNodeInfosByText(NOTIFICATION_TIP);
-        Log.e(TAG, "检查红包：" + fetchhongbao);
+        Log.i(TAG, "检查红包：" + fetchhongbao);
         if (fetchNodes.isEmpty()) {
             if (!flag && isPrepare) {
                 flag = checkList(nodeInfo);
             }
-            Log.e(TAG, "fetchNodes找不到'领取红包'");
+            Log.i(TAG, "fetchNodes找不到'领取红包'");
             return;
         }
         /*没找到就返回*/
@@ -352,13 +352,12 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         AccessibilityNodeInfo successNoticeNodes = findOpenButton(nodeInfo);
 
         if (successNoticeNodes != null) {
-            Log.e(TAG, "successNoticeNodes:" + successNoticeNodes.getClassName());
+            Log.i(TAG, "successNoticeNodes:" + successNoticeNodes.getClassName());
         }
         if (successNoticeNodes != null && successNoticeNodes.getClassName().equals("android.widget.Button")) {
             final AccessibilityNodeInfo openNode = successNoticeNodes;
             Stage.getInstance().entering(Stage.OPENED_STAGE);
             int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 500;
-
 
 
             new android.os.Handler().postDelayed(
@@ -368,7 +367,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                                 if (StatusValue.getInstance().isSupportAutoRob()) {
                                     openNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                 }
-                                Log.e(TAG, "拆红包");
+                                Log.i(TAG, "拆红包");
 
                             } catch (Exception e) {
 
@@ -383,7 +382,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 return -1;
             }
         } else {
-            Log.e(TAG, "正在打开");
+            Log.i(TAG, "正在打开");
             Stage.getInstance().entering(Stage.OPENING_STAGE);
             ttl += 1;
             return -1;
@@ -401,7 +400,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
      * 递归查找拆红包按钮
      */
     private AccessibilityNodeInfo findOpenButton(AccessibilityNodeInfo node) {
-        Log.e(TAG, "findOpenButton");
+        Log.i(TAG, "findOpenButton");
         if (node == null)
             return null;
 
@@ -436,24 +435,19 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         List<AccessibilityNodeInfo> successNoticeNodes = nodeInfo.findAccessibilityNodeInfosByText("删除");
         if (!successNoticeNodes.isEmpty()) {
             AccessibilityNodeInfo deleteNode = successNoticeNodes.get(successNoticeNodes.size() - 1);
-            Log.e(TAG, "deleteHongbao.size():" + successNoticeNodes.size());
-            if (deleteNode.getParent() != null && deleteNode.getText() != null && deleteNode.getText().toString().equals("删除")) {
-                Log.e(TAG, "找删除文字");
-                if (StatusValue.getInstance().isSupportDelete()) {
-                    if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.LinearLayout")) {
-                        Log.e(TAG, "點擊刪除1");
-                        deleteNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        deleteAndClean(deleteNode);
-                        return true;
-                    }
-                } else {
-                    if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.ListView")) {
-                        Log.e(TAG, "點擊刪除2");
-                        deleteNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        deleteAndClean(deleteNode);
-                        return true;
-                    }
-
+            Log.i(TAG, "deleteHongbao.size():" + successNoticeNodes.size());
+            if (deleteNode.getParent() != null && deleteNode.getText() != null && deleteNode.getText().toString().equals("删除") && deleteNode.getParent().getPackageName().equals("com.tencent.mm")) {
+                Log.i(TAG, "找删除文字");
+                if (deleteNode.getParent().getClassName().equals("android.widget.LinearLayout")) {
+                    Log.i(TAG, "點擊刪除1");
+                    deleteNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    deleteAndClean(deleteNode);
+                    return true;
+                } else if (deleteNode.getParent().getClassName().equals("android.widget.ListView")) {
+                    Log.i(TAG, "點擊刪除2");
+                    deleteNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    deleteAndClean(deleteNode);
+                    return true;
                 }
             }
         }
@@ -484,8 +478,8 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         List<AccessibilityNodeInfo> noticeNodes = nodeInfo.findAccessibilityNodeInfosByText("删除");
         if (!noticeNodes.isEmpty()) {
             AccessibilityNodeInfo deleteNode = noticeNodes.get(noticeNodes.size() - 1);
-            Log.e(TAG, "deleteHongbao.size():" + noticeNodes.size());
-            Log.e(TAG, "deleteNode:" + deleteNode.isClickable());
+            Log.i(TAG, "deleteHongbao.size():" + noticeNodes.size());
+            Log.i(TAG, "deleteNode:" + deleteNode.isClickable());
             if (deleteNode != null && deleteNode.getParent() != null && deleteNode.getText() != null && deleteNode.getText().toString().equals("删除")) {
                 if (deleteNode.getParent().getPackageName().equals("com.tencent.mm") && deleteNode.getParent().getClassName().equals("android.widget.LinearLayout")) {
                     Toast.makeText(this, "软件开启成功", Toast.LENGTH_SHORT).show();
@@ -546,37 +540,37 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
      */
     private boolean checkBackFromHongbaoPage(AccessibilityNodeInfo nodeInfo) {
         if (nodeInfo != null) {
-            Log.e(TAG, "checkBackFromHongbaoPage");
+            Log.i(TAG, "checkBackFromHongbaoPage");
             List<AccessibilityNodeInfo> hongbaoDetailNodes = nodeInfo.findAccessibilityNodeInfosByText("红包详情");
 //            List<AccessibilityNodeInfo> successNodes2 = nodeInfo.findAccessibilityNodeInfosByText("微信安全支付");
             if (!hongbaoDetailNodes.isEmpty()) {
                 for (int i = 0; i < hongbaoDetailNodes.size(); i++) {
-                    Log.e(TAG, "checkBackFromHongbaoPage_index:" + i);
+                    Log.i(TAG, "checkBackFromHongbaoPage_index:" + i);
                     if (hongbaoDetailNodes.get(i).getParent() != null) {
-//                        Log.e(TAG, "hongbaoDetailNodes.get(i)..getParent().getChildCount():" + hongbaoDetailNodes.get(i).getParent().getChildCount());
-//                        Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(1.getText():" + hongbaoDetailNodes.get(i).getParent().getChild(1).getText());
-//                        Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(2).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(2).getText());
+//                        Log.i(TAG, "hongbaoDetailNodes.get(i)..getParent().getChildCount():" + hongbaoDetailNodes.get(i).getParent().getChildCount());
+//                        Log.i(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(1.getText():" + hongbaoDetailNodes.get(i).getParent().getChild(1).getText());
+//                        Log.i(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(2).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(2).getText());
                         if (hongbaoDetailNodes.get(i).getParent().getChildCount() == 3 && hongbaoDetailNodes.get(i).getParent().getChild(2).getText().toString().equals("红包详情")) {
                             if (StatusValue.getInstance().isSupportDelete()) {
                                 Stage.getInstance().entering(Stage.DELETING_STAGE);
                             } else {
                                 Stage.getInstance().entering(Stage.FETCHED_STAGE);
                             }
-                            Log.e(TAG, "卡在详情界面，回退1");
+                            Log.w(TAG, "卡在详情界面，回退1");
                             performMyGlobalAction(GLOBAL_ACTION_BACK);
                             return true;
                         }
                         if (hongbaoDetailNodes.get(i).getParent().getChildCount() == 4) {
-//                            Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(1.getText():" + hongbaoDetailNodes.get(i).getParent().getChild(1).getText());
-//                            Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(2).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(2).getText());
-//                            Log.e(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(3).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(3).getText());
+//                            Log.d(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(1.getText():" + hongbaoDetailNodes.get(i).getParent().getChild(1).getText());
+//                            Log.d(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(2).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(2).getText());
+//                            Log.d(TAG, "hongbaoDetailNodes.get(i).getParent().getChild(3).getText():" + hongbaoDetailNodes.get(i).getParent().getChild(3).getText());
                             if (hongbaoDetailNodes.get(i).getParent().getChild(3).getText().equals("红包记录")) {
                                 if (StatusValue.getInstance().isSupportDelete()) {
                                     Stage.getInstance().entering(Stage.DELETING_STAGE);
                                 } else {
                                     Stage.getInstance().entering(Stage.FETCHED_STAGE);
                                 }
-                                Log.e(TAG, "卡在详情界面，回退2");
+                                Log.w(TAG, "卡在详情界面，回退2");
                                 performMyGlobalAction(GLOBAL_ACTION_BACK);
                             }
                         }
@@ -605,24 +599,24 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         if (nodeInfo == null) {
             return false;
         }
-        Log.e(TAG, "checkList");
-        Log.e(TAG, " nodeInfo:" + nodeInfo.toString());
+        Log.d(TAG, "checkList");
+        Log.d(TAG, " nodeInfo:" + nodeInfo.toString());
 
         List<AccessibilityNodeInfo> mynodes = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/adh");
         if (!mynodes.isEmpty()) {
             for (int i = 0; i < mynodes.size(); i++) {
-                Log.e(TAG, "checkList->>mynodes.get(i):" + mynodes.get(i).getText());
+                Log.d(TAG, "checkList->>mynodes.get(i):" + mynodes.get(i).getText());
                 if (mynodes.get(i) != null && mynodes.get(i).getText().toString().contains(NOTIFICATION_TIP)) {
-                    Log.e(TAG, " checkList->>nodeName:" + nodeInfo.getClassName());
-                    Log.e(TAG, " checkList->>node,getClassName:" + mynodes.get(i).getParent().getParent().getClassName());
-                    Log.e(TAG, "checkList->> node,getChild(0):" + mynodes.get(i).getParent().getParent().getChild(0));
-                    Log.e(TAG, " checkList->>node,isClickable:" + mynodes.get(i).getParent().getParent().getChild(0).isClickable());
+                    Log.d(TAG, " checkList->>nodeName:" + nodeInfo.getClassName());
+                    Log.d(TAG, " checkList->>node,getClassName:" + mynodes.get(i).getParent().getParent().getClassName());
+                    Log.d(TAG, "checkList->> node,getChild(0):" + mynodes.get(i).getParent().getParent().getChild(0));
+                    Log.d(TAG, " checkList->>node,isClickable:" + mynodes.get(i).getParent().getParent().getChild(0).isClickable());
                     AccessibilityNodeInfo nodeToClick = mynodes.get(i).getParent().getParent().getChild(0);
                     if (nodeToClick == null) return false;
                     if (nodeToClick.isClickable()) {
                         nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        Log.e(TAG, "checkList->>ACTION_CLICK");
-//                Log.e(TAG, "fetchHongbao: "+ NOTIFICATION_TIP);
+                        Log.d(TAG, "checkList->>ACTION_CLICK");
+//                Log.d(TAG, "fetchHongbao: "+ NOTIFICATION_TIP);
 //                lastContentDescription = contentDescription.toString();
                         return true;
                     }
@@ -632,17 +626,17 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
 //        List<AccessibilityNodeInfo> nodes =nodeInfo.findAccessibilityNodeInfosByText(NOTIFICATION_TIP);
 //        if (!nodes.isEmpty()) {
 //            for(int i=0;i<nodes.size();i++){
-//                Log.e(TAG,"nodes.get(i):"+nodes.get(i));
+//                Log.d(TAG,"nodes.get(i):"+nodes.get(i));
 //            }
 //            AccessibilityNodeInfo nodeToClick = nodes.get(0);
 //            if (nodeToClick == null) return false;
 //            CharSequence contentDescription = nodeToClick.getContentDescription();
-////            Log.e(TAG,"contentDescription:"+contentDescription);
-////            Log.e(TAG,"lastContentDescription:"+lastContentDescription);
+////            Log.d(TAG,"contentDescription:"+contentDescription);
+////            Log.d(TAG,"lastContentDescription:"+lastContentDescription);
 //            if (contentDescription != null && nodeToClick.isClickable()/*&& !lastContentDescription.equals(contentDescription)*/) {
 //                nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-//                Log.e(TAG, "checkList->>ACTION_CLICK");
-////                Log.e(TAG, "fetchHongbao: "+ NOTIFICATION_TIP);
+//                Log.d(TAG, "checkList->>ACTION_CLICK");
+////                Log.d(TAG, "fetchHongbao: "+ NOTIFICATION_TIP);
 ////                lastContentDescription = contentDescription.toString();
 //                return true;
 //            }
