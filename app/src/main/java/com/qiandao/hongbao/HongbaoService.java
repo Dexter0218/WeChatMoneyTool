@@ -1,16 +1,17 @@
 package com.qiandao.hongbao;
 
 import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.GestureDescription;
 import android.annotation.TargetApi;
-import android.app.KeyguardManager;
 import android.app.Notification;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Path;
 import android.os.Build;
 import android.os.Parcelable;
-import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -51,7 +52,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
      */
     private int ttl = 0;
     private final static String NOTIFICATION_TIP = "[微信红包]";
-    private final static String ZHIFUBAO_HONGHAO_TIP="人人可领，领完就能用。祝大家领取的红包金额大大大！#吱口令#长按复制此消息，打开支付宝就能领取！fbQfV839B2 ";
+    private final static String ZHIFUBAO_HONGHAO_TIP = "人人可领，领完就能用。祝大家领取的红包金额大大大！#吱口令#长按复制此消息，打开支付宝就能领取！fbQfV839B2 ";
     AccessibilityNodeInfo mCurrentNode;
 
     //是否进行了亮屏解锁操作
@@ -176,6 +177,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 // 将文本内容放到系统剪贴板里。
                 cm.setText(ZHIFUBAO_HONGHAO_TIP);
                 int result = openHongbao(nodeInfo);
+
                 /* 如果打开红包失败且还没到达最大尝试次数，重试 */
                 if (result == -1 && ttl < MAX_TTL) {
                     return;
@@ -359,12 +361,11 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         if (successNoticeNodes != null) {
             Log.i(TAG, "successNoticeNodes:" + successNoticeNodes.getClassName());
         }
+
         if (successNoticeNodes != null && successNoticeNodes.getClassName().equals("android.widget.Button")) {
-            final AccessibilityNodeInfo openNode = successNoticeNodes;
             Stage.getInstance().entering(Stage.OPENED_STAGE);
             int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 500;
-
-
+            final AccessibilityNodeInfo openNode = successNoticeNodes;
             new android.os.Handler().postDelayed(
                     new Runnable() {
                         public void run() {
@@ -394,6 +395,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         }
     }
 
+
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
@@ -415,7 +417,25 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
             Log.d(TAG, "node.getText():" + node.getText());
             if ("android.widget.Button".equals(node.getClassName()))
                 return node;
-            else
+            else if ("android.widget.FrameLayout".equals(node.getClassName())) {
+                int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 500;
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                try {
+                                    if (StatusValue.getInstance().isSupportAutoRob()) {
+                                        clickScreen();
+                                    }
+                                    Log.i(TAG, "拆红包");
+
+                                } catch (Exception e) {
+
+
+                                }
+                            }
+                        },
+                        100 + delayFlag);
+            } else
                 return null;
         }
 
@@ -653,4 +673,33 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
 
     }
+
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private void clickScreen() {
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
+        final int x = displayMetrics.widthPixels / 2;
+        final int y = displayMetrics.heightPixels * 3 / 5;
+        Log.d(TAG, "clickScreen:" + x + ":" + y);
+        GestureDescription.Builder gestureBuilder = new GestureDescription.Builder();
+        Path path = new Path();
+        path.moveTo(x, y);
+        gestureBuilder.addStroke(new GestureDescription.StrokeDescription(path, 0, 10));
+        dispatchGesture(gestureBuilder.build(), new AccessibilityService.GestureResultCallback() {
+            @Override
+            public void onCompleted(GestureDescription gestureDescription) {
+                Log.i(TAG, "Gesture Completed");
+                super.onCompleted(gestureDescription);
+            }
+
+            @Override
+            public void onCancelled(GestureDescription gestureDescription) {
+                Log.i(TAG, "Gesture onCancelled");
+                super.onCancelled(gestureDescription);
+            }
+        }, null);
+    }
+
+
 }

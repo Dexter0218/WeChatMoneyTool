@@ -54,18 +54,18 @@ public class StatusValue {
         this.exculdeWords = exculdeWords;
     }
 
-    public static boolean isSupportAutoRob() {
+    public  boolean isSupportAutoRob() {
         return isSupportAutoRob;
     }
 
-    public static void setIsSupportAutoRob(boolean isSupportAutoRob) {
+    public  void setIsSupportAutoRob(boolean isSupportAutoRob) {
         StatusValue.isSupportAutoRob = isSupportAutoRob;
     }
-    public static boolean isSupportDelete() {
+    public  boolean isSupportDelete() {
         return isSupportDelete;
     }
 
-    public static void setIsSupportDelete(boolean isSupportDelete) {
+    public  void setIsSupportDelete(boolean isSupportDelete) {
         StatusValue.isSupportDelete = isSupportDelete;
     }
 }

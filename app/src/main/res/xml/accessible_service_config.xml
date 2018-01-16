@@ -8,4 +8,5 @@
     android:notificationTimeout="0"
     android:accessibilityFlags=""
     android:settingsActivity="com.qiandao.hongbao.MainActivity"
+    android:canPerformGestures="true"
     android:canRetrieveWindowContent="true"/>
