@@ -23,7 +23,7 @@ import java.io.IOException;
 
 /**
  * Created by Zhongyi on 1/20/16.
- * ScreenUtil for app update task.
+ *  for app update task.
  */
 public class UpdateTask extends AsyncTask<String, String, String> {
     private static final String TAG = "UpdateTask";

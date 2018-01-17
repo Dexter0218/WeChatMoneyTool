@@ -3,21 +3,24 @@ package com.qiandao.hongbao;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
 import android.annotation.TargetApi;
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Path;
+import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Parcelable;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
 
-import com.qiandao.hongbao.util.ScreenUtil;
 import com.qiandao.hongbao.util.Validator;
 
 import java.util.ArrayList;
@@ -64,6 +67,15 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     private long timeOld;
     private long timeNew;
 
+
+    private  PowerManager pm;
+    //唤醒锁
+    private  PowerManager.WakeLock lock = null;
+
+    private  KeyguardManager kManager;
+    //安全锁
+    private  KeyguardManager.KeyguardLock kLock = null;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -89,15 +101,15 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 return;
             }
 
-            if (!ScreenUtil.isScreenOn(this)) {
+            if (!isScreenOn(this)) {
                 if (!StatusValue.getInstance().isSupportBlackSreen()) return;
-                ScreenUtil.lightScreen(this);
+                lightScreen(this);
                 isPrepare = true;
             } else {
                 isPrepare = false;
             }
-            if (ScreenUtil.isLockOn(this)) {
-                ScreenUtil.unLock(this);
+            if (isLockOn(this)) {
+                unLock(this);
                 isPrepare = true;
             } else {
                 isPrepare = isPrepare || false;
@@ -225,6 +237,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                     if (StatusValue.getInstance().isSupportDelete()) {
                         Stage.getInstance().entering(Stage.DELETING_STAGE);
                     } else {
+                        cleanFlag();
                         Stage.getInstance().entering(Stage.FETCHED_STAGE);
                     }
                     performMyGlobalAction(GLOBAL_ACTION_BACK);
@@ -484,8 +497,17 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         isHongbaoAppOK = false;
         if (isPrepare && nodesToFetch.size() == 0) {
             if (performGlobalAction(GLOBAL_ACTION_RECENTS)) {
-                ScreenUtil.clean();
+                clean();
             }
+            isPrepare = false;
+        }
+    }
+
+    private void cleanFlag() {
+        flag = false;
+        isHongbaoAppOK = false;
+        if (isPrepare && nodesToFetch.size() == 0) {
+            clean();
             isPrepare = false;
         }
     }
@@ -699,6 +721,99 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 super.onCancelled(gestureDescription);
             }
         }, null);
+    }
+    /**
+     * 判断屏幕是否亮
+     *
+     * @param context the context
+     * @return true when (at least one) screen is on
+     */
+    private boolean isScreenOn(Context context) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            DisplayManager dm = (DisplayManager) context
+                    .getSystemService(Context.DISPLAY_SERVICE);
+            boolean screenOn = false;
+            for (Display display : dm.getDisplays()) {
+                if (display.getState() != Display.STATE_OFF) {
+                    screenOn = true;
+                }
+            }
+            return screenOn;
+        } else {
+            PowerManager pm = (PowerManager) context
+                    .getSystemService(Context.POWER_SERVICE);
+            // noinspection deprecation
+            return pm.isScreenOn();
+        }
+    }
+
+
+    /**
+     * 判断是否加了安全锁
+     *
+     * @return
+     */
+    private boolean isLockOn(Context context) {
+        KeyguardManager kM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        if (kM != null) {
+            if (kM.isKeyguardLocked()) { // && kM.isKeyguardSecure()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * 点亮屏幕
+     */
+    private void lightScreen(Context context) {
+        if (pm == null) {
+            pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        }
+        Log.e(TAG, "lightScreen()");
+        lock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, TAG);
+        lock.acquire();
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        try {
+                            clean();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                30000);
+    }
+
+    /**
+     * 解锁
+     */
+    private  void unLock(Context context) {
+        if (kManager == null) {
+            kManager = ((KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE));
+        }
+        Log.e(TAG, "unLock()");
+        kLock = kManager.newKeyguardLock(TAG);
+        kLock.disableKeyguard();
+    }
+
+    /**
+     * 清理环境
+     */
+    private void clean() {
+
+        Log.e(TAG, "clean()");
+        if (kLock != null) {
+            kLock.reenableKeyguard();
+            kLock = null;
+        }
+        if (lock != null) {
+            lock.release();
+            lock = null;
+        }
     }
 
 
