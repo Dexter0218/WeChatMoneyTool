@@ -237,7 +237,6 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                     if (StatusValue.getInstance().isSupportDelete()) {
                         Stage.getInstance().entering(Stage.DELETING_STAGE);
                     } else {
-                        cleanFlag();
                         Stage.getInstance().entering(Stage.FETCHED_STAGE);
                     }
                     performMyGlobalAction(GLOBAL_ACTION_BACK);
@@ -321,6 +320,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 flag = checkList(nodeInfo);
             }
             Log.i(TAG, "fetchNodes找不到'领取红包'");
+            checkList(nodeInfo);
             return;
         }
         /*没找到就返回*/
@@ -649,16 +649,23 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         Log.d(TAG, "checkList");
         Log.d(TAG, " nodeInfo:" + nodeInfo.toString());
 
-        List<AccessibilityNodeInfo> mynodes = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/adh");
+
+        List<AccessibilityNodeInfo> mynodes = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/apv");
         if (!mynodes.isEmpty()) {
             for (int i = 0; i < mynodes.size(); i++) {
                 Log.d(TAG, "checkList->>mynodes.get(i):" + mynodes.get(i).getText());
-                if (mynodes.get(i) != null && mynodes.get(i).getText().toString().contains(NOTIFICATION_TIP)) {
-                    Log.d(TAG, " checkList->>nodeName:" + nodeInfo.getClassName());
-                    Log.d(TAG, " checkList->>node,getClassName:" + mynodes.get(i).getParent().getParent().getClassName());
-                    Log.d(TAG, "checkList->> node,getChild(0):" + mynodes.get(i).getParent().getParent().getChild(0));
-                    Log.d(TAG, " checkList->>node,isClickable:" + mynodes.get(i).getParent().getParent().getChild(0).isClickable());
-                    AccessibilityNodeInfo nodeToClick = mynodes.get(i).getParent().getParent().getChild(0);
+                if (mynodes.get(i) != null &&mynodes.get(i).getText()!=null && mynodes.get(i).getText().toString().contains(NOTIFICATION_TIP)) {
+//                    Log.d(TAG, " checkList->> 1:" + mynodes.get(i).getClassName());
+//                    Log.d(TAG, " checkList->> 11:" + mynodes.get(i).getChildCount());
+//                    Log.d(TAG, " checkList->> 2:" + mynodes.get(i).getParent().getClassName());
+//                    Log.d(TAG, " checkList->> 2:" + mynodes.get(i).getParent().isClickable());
+//                    Log.d(TAG, " checkList->> 22:" + mynodes.get(i).getParent().getChildCount());
+//                    Log.d(TAG, " checkList->> 3:" + mynodes.get(i).getParent().getParent().getClassName());
+//                    Log.d(TAG, " checkList->> 33:" + mynodes.get(i).getParent().getParent().getChildCount());
+//com.tencent.mm:id/apr
+//                    Log.d(TAG, "checkList->> node,getChild(0):" + mynodes.get(i).getParent().getParent().getChild(0));
+//                    Log.d(TAG, " checkList->>node,isClickable:" + mynodes.get(i).getParent().getParent().getChild(0).isClickable());
+                    AccessibilityNodeInfo nodeToClick = mynodes.get(i).getParent();
                     if (nodeToClick == null) return false;
                     if (nodeToClick.isClickable()) {
                         nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -779,7 +786,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                 new Runnable() {
                     public void run() {
                         try {
-                            clean();
+                            cleanFlag();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
