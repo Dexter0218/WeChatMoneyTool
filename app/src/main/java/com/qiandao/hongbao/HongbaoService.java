@@ -68,13 +68,13 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     private long timeNew;
 
 
-    private  PowerManager pm;
+    private PowerManager pm;
     //唤醒锁
-    private  PowerManager.WakeLock lock = null;
+    private PowerManager.WakeLock lock = null;
 
-    private  KeyguardManager kManager;
+    private KeyguardManager kManager;
     //安全锁
-    private  KeyguardManager.KeyguardLock kLock = null;
+    private KeyguardManager.KeyguardLock kLock = null;
 
     @Override
     public void onCreate() {
@@ -390,7 +390,6 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
 
                             } catch (Exception e) {
 
-
                             }
                         }
                     },
@@ -443,6 +442,8 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
+                                } finally {
+                                    Stage.getInstance().entering(Stage.FETCHED_STAGE);
                                 }
                             }
                         },
@@ -653,7 +654,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
         if (!mynodes.isEmpty()) {
             for (int i = 0; i < mynodes.size(); i++) {
                 Log.d(TAG, "checkList->>mynodes.get(i):" + mynodes.get(i).getText());
-                if (mynodes.get(i) != null &&mynodes.get(i).getText()!=null && mynodes.get(i).getText().toString().contains(NOTIFICATION_TIP)) {
+                if (mynodes.get(i) != null && mynodes.get(i).getText() != null && mynodes.get(i).getText().toString().contains(NOTIFICATION_TIP)) {
 //                    Log.d(TAG, " checkList->> 1:" + mynodes.get(i).getClassName());
 //                    Log.d(TAG, " checkList->> 11:" + mynodes.get(i).getChildCount());
 //                    Log.d(TAG, " checkList->> 2:" + mynodes.get(i).getParent().getClassName());
@@ -728,6 +729,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
             }
         }, null);
     }
+
     /**
      * 判断屏幕是否亮
      *
@@ -797,7 +799,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     /**
      * 解锁
      */
-    private  void unLock(Context context) {
+    private void unLock(Context context) {
         if (kManager == null) {
             kManager = ((KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE));
         }
