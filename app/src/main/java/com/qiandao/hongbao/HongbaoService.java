@@ -430,7 +430,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
             Log.d(TAG, "node.getText():" + node.getText());
             if ("android.widget.Button".equals(node.getClassName()))
                 return node;
-            else if ("android.widget.FrameLayout".equals(node.getClassName())) {
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && "android.widget.FrameLayout".equals(node.getClassName())) {
                 int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 500;
                 new android.os.Handler().postDelayed(
                         new Runnable() {
@@ -442,8 +442,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
                                     Log.i(TAG, "拆红包");
 
                                 } catch (Exception e) {
-
-
+                                    e.printStackTrace();
                                 }
                             }
                         },
