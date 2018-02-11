@@ -93,7 +93,7 @@ public class HongbaoService extends AccessibilityService implements SharedPrefer
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        Log.d(TAG, "event:" + event.getEventType());
+//        Log.d(TAG, "event:" + event.getEventType());
         if (event.getEventType() == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
             String tip = event.getText().toString();
             Log.i(TAG, "onAccessibilityEvent: tip" + tip);
